@@ -16,17 +16,24 @@ ACuboPawn::ACuboPawn()
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>("VRCameraComponent");
 	CameraComponent->SetupAttachment(PawnRootComponent);
 	
-	RightController = CreateDefaultSubobject<UMotionControllerComponent>("RightController");
-	RightController->SetupAttachment(PawnRootComponent);
-	LeftController = CreateDefaultSubobject<UMotionControllerComponent>("LeftController");
-	LeftController->SetupAttachment(PawnRootComponent);
+	RightControllerComponent = CreateDefaultSubobject<UMotionControllerComponent>("RightController");
+	RightControllerComponent->SetupAttachment(PawnRootComponent);
+	LeftControllerComponent = CreateDefaultSubobject<UMotionControllerComponent>("LeftController");
+	LeftControllerComponent->SetupAttachment(PawnRootComponent);
 }
 
 // Called when the game starts or when spawned
 void ACuboPawn::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	if(RightHandControllerClass && LeftHandControllerClass)
+	{
+		RightController = GetWorld()->SpawnActor<ACuboHandController>(RightHandControllerClass);
+		RightController->AttachToComponent(RightControllerComponent, FAttachmentTransformRules::KeepRelativeTransform, FName("RightController"));
+		LeftController = GetWorld()->SpawnActor<ACuboHandController>(LeftHandControllerClass);
+		LeftController->AttachToComponent(LeftControllerComponent, FAttachmentTransformRules::KeepRelativeTransform, FName("LeftController"));
+	}
 }
 
 // Called every frame

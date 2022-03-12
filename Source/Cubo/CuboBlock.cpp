@@ -17,7 +17,7 @@ void ACuboBlock::BeginPlay()
 
 void ACuboBlock::SetColor(const FLinearColor& CubeColor)
 {
-	if(! DynamicMaterial)
+	if(! DynamicMaterial && GetStaticMeshComponent())
 	{
 		UMaterialInterface* MaterialInterface = GetStaticMeshComponent()->GetMaterial(0);
 
@@ -27,7 +27,6 @@ void ACuboBlock::SetColor(const FLinearColor& CubeColor)
 
 			if(DynamicMaterial)
 			{
-				DynamicMaterial->SetVectorParameterValue(FName("CubeColor"), CubeColor);
 				GetStaticMeshComponent()->SetMaterial(0, DynamicMaterial);
 			}
 			else
@@ -39,5 +38,10 @@ void ACuboBlock::SetColor(const FLinearColor& CubeColor)
 		{
 			UE_LOG(LogTemp, Error, TEXT("Failed to set color. No material found for %s."), *GetName())
 		}
+	}
+	
+	if(DynamicMaterial)
+	{
+		DynamicMaterial->SetVectorParameterValue(FName("CubeColor"), CubeColor);
 	}
 }

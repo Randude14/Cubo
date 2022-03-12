@@ -3,12 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "CuboHandController.h"
 #include "MotionControllerComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/Pawn.h"
 #include "CuboPawn.generated.h"
 
 class UMotionControllerComponent;
+class ACuboHandController;
 
 UCLASS()
 class CUBO_API ACuboPawn : public APawn
@@ -26,11 +28,24 @@ public:
 	UCameraComponent* CameraComponent;
 	
 	UPROPERTY(VisibleAnywhere)
-	UMotionControllerComponent* LeftController;
+	UMotionControllerComponent* LeftControllerComponent;
 	
 	UPROPERTY(VisibleAnywhere)
-	UMotionControllerComponent* RightController;
+	UMotionControllerComponent* RightControllerComponent;
 
+	UPROPERTY()
+	ACuboHandController* LeftController;
+
+	UPROPERTY()
+	ACuboHandController* RightController;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Cubo")
+	TSubclassOf<ACuboHandController> LeftHandControllerClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Cubo")
+	TSubclassOf<ACuboHandController> RightHandControllerClass;
+
+	
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
