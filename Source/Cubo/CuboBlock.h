@@ -14,12 +14,25 @@ class CUBO_API ACuboBlock : public AStaticMeshActor
 public:	
 	// Sets default values for this actor's properties
 	ACuboBlock();
+	
+	void Highlight();
+	void Unhighlight();
+
+	UPROPERTY(EditAnywhere, Category="Cubo")
+	FName ColorParam;
+
+	UPROPERTY(EditAnywhere, Category="Cubo")
+	FName HighlightParam;
+
+	UPROPERTY(EditAnywhere, Category="Cubo")
+	float HighlightPercentage;
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 	UMaterialInstanceDynamic* DynamicMaterial;
+	FLinearColor Color;
 
 public:	
 	UFUNCTION(BlueprintCallable)

@@ -5,7 +5,8 @@
 
 ACuboBlock::ACuboBlock()
 {
-
+	ColorParam = FName("CubeColor");
+	HighlightParam = FName("CubeHighlight");
 }
 
 // Called when the game starts or when spawned
@@ -13,6 +14,22 @@ void ACuboBlock::BeginPlay()
 {
 	Super::BeginPlay();
 	
+}
+
+void ACuboBlock::Highlight()
+{
+	if(DynamicMaterial)
+	{
+		DynamicMaterial->SetScalarParameterValue(HighlightParam, HighlightPercentage);
+	}
+}
+
+void ACuboBlock::Unhighlight()
+{
+	if(DynamicMaterial)
+	{
+		DynamicMaterial->SetScalarParameterValue(HighlightParam, 0.f);
+	}
 }
 
 void ACuboBlock::SetColor(const FLinearColor& CubeColor)
@@ -42,6 +59,7 @@ void ACuboBlock::SetColor(const FLinearColor& CubeColor)
 	
 	if(DynamicMaterial)
 	{
-		DynamicMaterial->SetVectorParameterValue(FName("CubeColor"), CubeColor);
+		DynamicMaterial->SetVectorParameterValue(ColorParam, CubeColor);
+		Color = CubeColor;
 	}
 }
