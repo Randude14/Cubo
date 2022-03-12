@@ -3,6 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Components/SplineComponent.h"
+#include "Components/SplineMeshComponent.h"
+#include "Components/WidgetInteractionComponent.h"
+#include "Cubo/CuboBlock.h"
 #include "GameFramework/Actor.h"
 #include "CuboHandController.generated.h"
 
@@ -19,17 +23,31 @@ public:
 	USceneComponent* ControllerRoot;
 
 	UPROPERTY(EditAnywhere)
-	UStaticMeshComponent* LaserBeam;
+	USplineComponent* LaserSpline;
+
+	UPROPERTY(EditAnywhere)
+	UWidgetInteractionComponent* LaserDirection;
+
+	UPROPERTY(EditAnywhere)
+	USplineMeshComponent* LaserBeam;
 
 	UPROPERTY(EditAnywhere, Category="Cubo")
 	float MaxLaserDistance;
+
+	UPROPERTY()
+	ACuboHandController* OtherController;
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 	void UpdateLaserBeam();
-	FHitResult ObjectHitResult;
+
+	UPROPERTY()
+	AActor* SelectedActor;
+
+	UPROPERTY()
+	ACuboBlock* CuboBlock;
 
 public:
 	// Called every frame

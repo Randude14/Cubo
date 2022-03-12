@@ -2,6 +2,7 @@
 
 
 #include "CuboHandController.h"
+#include "Components/WidgetInteractionComponent.h"
 
 
 // Sets default values
@@ -13,8 +14,17 @@ ACuboHandController::ACuboHandController()
 	ControllerRoot = CreateDefaultSubobject<USceneComponent>("ControllerRoot");
 	SetRootComponent(ControllerRoot);
 
-	LaserBeam = CreateDefaultSubobject<UStaticMeshComponent>("LaserBeamMesh");
-	LaserBeam->SetupAttachment(ControllerRoot);
+	LaserDirection = CreateDefaultSubobject<UWidgetInteractionComponent>("LaserDirection");
+	LaserDirection->SetMobility(EComponentMobility::Movable);
+	LaserDirection->SetupAttachment(ControllerRoot);
+
+	LaserSpline = CreateDefaultSubobject<USplineComponent>("LaserSpline");
+	LaserSpline->SetMobility(EComponentMobility::Movable);
+	LaserSpline->SetupAttachment(LaserDirection);
+	
+	LaserBeam = CreateDefaultSubobject<USplineMeshComponent>("LaserBeamMesh");
+	LaserBeam->SetMobility(EComponentMobility::Movable);
+	LaserBeam->SetupAttachment(LaserDirection);
 
 	MaxLaserDistance = 300.f;
 }
@@ -43,21 +53,44 @@ void ACuboHandController::UpdateLaserBeam()
 		return;
 	}
 
-	FVector LaserLocation = LaserBeam->GetComponentLocation();
-	FVector LaserForward = LaserBeam->GetForwardVector() * MaxLaserDistance; // TODO: maybe turn into a uproperty?
-	bool bHitObject = World->LineTraceSingleByChannel(ObjectHitResult, LaserLocation, LaserForward, ECollisionChannel::ECC_Visibility);
-
-	float BeamDistance = MaxLaserDistance;
-
-	if(bHitObject)
-	{
-		BeamDistance = ObjectHitResult.Distance;
-	}
+	FCollisionQueryParams Params;
+	Params.AddIgnoredActor(this);
+	Params.AddIgnoredActor(OtherController);
 	
-	FVector Scale = LaserBeam->GetComponentScale();
-	Scale.X = BeamDistance;
+	FHitResult ObjectHitResult;
+	FVector LaserLocation = LaserDirection->GetComponentLocation();
+	FVector LaserForward = LaserDirection->GetForwardVector() * MaxLaserDistance + LaserLocation;
+	bool bHitObject = World->LineTraceSingleByChannel(ObjectHitResult, LaserLocation, LaserForward, ECollisionChannel::ECC_Visibility);
+	
+	SelectedActor = ObjectHitResult.GetActor();
 
-	LaserBeam->SetWorldScale3D(Scale);
+	FVector HitLocation = bHitObject ? ObjectHitResult.Location : LaserForward;
+	LaserSpline->SetLocationAtSplinePoint(0, LaserLocation, ESplineCoordinateSpace::World);
+	LaserSpline->SetTangentAtSplinePoint(0, FVector::ZeroVector, ESplineCoordinateSpace::World);
+	LaserSpline->SetLocationAtSplinePoint(1, HitLocation, ESplineCoordinateSpace::World);
+	LaserSpline->SetTangentAtSplinePoint(1, FVector::ZeroVector, ESplineCoordinateSpace::World);
+
+	FVector LaserPointStart = LaserSpline->GetLocationAtSplinePoint(0, ESplineCoordinateSpace::Local);
+	FVector LaserPointTanStart = LaserSpline->GetTangentAtSplinePoint(0, ESplineCoordinateSpace::Local);
+	FVector LaserPointEnd = LaserSpline->GetLocationAtSplinePoint(1, ESplineCoordinateSpace::Local);
+	FVector LaserPointTanEnd = LaserSpline->GetTangentAtSplinePoint(1, ESplineCoordinateSpace::Local);
+	
+	LaserBeam->SetStartAndEnd(LaserPointStart, LaserPointTanStart, LaserPointEnd, LaserPointTanEnd, true);
+
+	if(SelectedActor != CuboBlock)
+	{
+		if(CuboBlock)
+		{
+			CuboBlock->Unhighlight();
+		}
+
+		CuboBlock = Cast<ACuboBlock>(SelectedActor);
+
+		if(CuboBlock)
+		{
+			CuboBlock->Highlight();
+		}
+	}
 }
 
 void ACuboHandController::GrabPressed()

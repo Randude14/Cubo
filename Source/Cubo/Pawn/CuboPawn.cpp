@@ -33,6 +33,9 @@ void ACuboPawn::BeginPlay()
 		RightController->AttachToComponent(RightControllerComponent, FAttachmentTransformRules::KeepRelativeTransform, FName("RightController"));
 		LeftController = GetWorld()->SpawnActor<ACuboHandController>(LeftHandControllerClass);
 		LeftController->AttachToComponent(LeftControllerComponent, FAttachmentTransformRules::KeepRelativeTransform, FName("LeftController"));
+
+		RightController->OtherController = LeftController;
+		LeftController->OtherController = RightController;
 	}
 }
 
