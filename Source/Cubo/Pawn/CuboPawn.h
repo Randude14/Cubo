@@ -50,6 +50,23 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	// Input methods
+	void LeftGrabPressed();
+	void RightGrabPressed();
+	void LeftGrabRelased();
+	void RightGrabReleased();
+
+	void LeftAcceleratePressed();
+	void RightAcceleratePressed();
+	void LeftAccelerateReleased();
+	void RightAccelerateReleased();
+
+	void LeftRotatePiece();
+	void RightRotatePiece();
+
+	void MovePieceLeftController(float Axis);
+	void MovePieceRightController(float Axis);
+
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

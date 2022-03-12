@@ -4,32 +4,22 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "CuboHandController.generated.h"
+#include "CuboPiece.generated.h"
 
 UCLASS()
-class CUBO_API ACuboHandController : public AActor
+class CUBO_API ACuboPiece : public AActor
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this actor's properties
-	ACuboHandController();
+	ACuboPiece();
 
-	UPROPERTY(EditAnywhere)
-	USceneComponent* ControllerRoot;
-
-	UPROPERTY(EditAnywhere)
-	UStaticMeshComponent* LaserBeam;
-
-	UPROPERTY(EditAnywhere, Category="Cubo")
-	float MaxLaserDistance;
+	void Init(float MoveBy, float TimeBetween);
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
-	void UpdateLaserBeam();
-	FHitResult ObjectHitResult;
 
 public:
 	// Called every frame

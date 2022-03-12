@@ -3,11 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Cubo/CuboBlock.h"
 #include "GameFramework/Actor.h"
 #include "CuboGrid.generated.h"
 
 USTRUCT(BlueprintType)
-struct FCuboPiece
+struct FCuboPieceInfo
 {
 	GENERATED_BODY()
 	
@@ -39,11 +40,26 @@ public:
 
 	// List of the cubo pieces that will be generated and spawned for the player to fit in the grid
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Cubo")
-	TArray<FCuboPiece> GeneratedCuboPieces;
+	TArray<FCuboPieceInfo> GeneratedCuboPieces;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Cubo")
+	TSubclassOf<ACuboBlock> CuboBlockClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Cubo")
+	int32 GridWidth;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Cubo")
+	int32 GridHeight;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Cubo")
+	float SpawnTime = 5.f;
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	float Timer = 0.f;
+
+	TArray<USceneComponent*> Cubos;
 
 public:
 	// Called every frame

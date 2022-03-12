@@ -15,6 +15,8 @@ ACuboHandController::ACuboHandController()
 
 	LaserBeam = CreateDefaultSubobject<UStaticMeshComponent>("LaserBeamMesh");
 	LaserBeam->SetupAttachment(ControllerRoot);
+
+	MaxLaserDistance = 300.f;
 }
 
 // Called when the game starts or when spawned
@@ -28,5 +30,34 @@ void ACuboHandController::BeginPlay()
 void ACuboHandController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	UpdateLaserBeam();
 }
+
+void ACuboHandController::UpdateLaserBeam()
+{
+	UWorld* World = GetWorld();
+
+	if(World == nullptr)
+	{
+		return;
+	}
+
+	FVector LaserLocation = LaserBeam->GetComponentLocation();
+	FVector LaserForward = LaserBeam->GetForwardVector() * MaxLaserDistance; // TODO: maybe turn into a uproperty?
+	bool bHitObject = World->LineTraceSingleByChannel(ObjectHitResult, LaserLocation, LaserForward, ECollisionChannel::ECC_Visibility);
+
+	float BeamDistance = MaxLaserDistance;
+
+	if(bHitObject)
+	{
+		BeamDistance = ObjectHitResult.Distance;
+	}
+	
+	FVector Scale = LaserBeam->GetComponentScale();
+	Scale.X = BeamDistance;
+
+	LaserBeam->SetWorldScale3D(Scale);
+}
+
 
