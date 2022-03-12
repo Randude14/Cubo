@@ -68,12 +68,6 @@ void ACuboGrid::Tick(float DeltaTime)
 						r++;
 
 						CuboBlock->SetActorRelativeLocation(Location);
-
-						int32 H = FMath::RandRange(0, 1);
-						if(H == 1)
-						{
-							CuboBlock->Highlight();
-						}
 					}
 					else if(Pattern[i] == ' ')
 					{
