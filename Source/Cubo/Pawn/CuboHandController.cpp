@@ -60,4 +60,37 @@ void ACuboHandController::UpdateLaserBeam()
 	LaserBeam->SetWorldScale3D(Scale);
 }
 
+void ACuboHandController::GrabPressed()
+{
+	
+}
 
+void ACuboHandController::GrabReleased()
+{
+	
+}
+
+void ACuboHandController::AcceleratePressed()
+{
+	
+}
+
+void ACuboHandController::AccelerateReleased()
+{
+	
+}
+
+void ACuboHandController::TryRotatePiece()
+{
+	
+}
+
+void ACuboHandController::TryMovePieceLeft()
+{
+	
+}
+
+void ACuboHandController::TryMovePieceRight()
+{
+	
+}

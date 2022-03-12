@@ -65,54 +65,84 @@ void ACuboPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 // Grab functions
 void ACuboPawn::LeftGrabPressed()
 {
-	
+	if(LeftController)
+	{
+		LeftController->GrabPressed();
+	}
 }
 
 void ACuboPawn::RightGrabPressed()
 {
-	
+	if(RightController)
+	{
+		RightController->GrabPressed();
+	}
 }
 
 void ACuboPawn::LeftGrabRelased()
 {
-	
+	if(LeftController)
+	{
+		LeftController->GrabReleased();
+	}
 }
 
 void ACuboPawn::RightGrabReleased()
 {
-	
+	if(RightController)
+	{
+		RightController->GrabReleased();
+	}
 }
 
 // Accelerate functions
 void ACuboPawn::LeftAcceleratePressed()
 {
-	
+	if(LeftController)
+	{
+		LeftController->AcceleratePressed();
+	}
 }
 
 void ACuboPawn::RightAcceleratePressed()
 {
-	
+	if(RightController)
+	{
+		RightController->AcceleratePressed();
+	}
 }
 
 void ACuboPawn::LeftAccelerateReleased()
 {
-	
+	if(LeftController)
+	{
+		LeftController->AccelerateReleased();
+	}
 }
 
 void ACuboPawn::RightAccelerateReleased()
 {
-	
+	if(RightController)
+	{
+		RightController->AccelerateReleased();
+	}
 }
 
 // Rotate functions
 void ACuboPawn::LeftRotatePiece()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Move Piece Left"))
+	if(LeftController)
+	{
+		LeftController->TryRotatePiece();
+	}
 }
 
 void ACuboPawn::RightRotatePiece()
 {
-	
+	if(RightController)
+	{
+		RightController->TryRotatePiece();
+	}
 }
 
 // Move piece functions
@@ -120,11 +150,17 @@ void ACuboPawn::MovePieceLeftController(float Axis)
 {
 	if(Axis > 0.f)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Move Piece Left"))
+		if(LeftController)
+		{
+			LeftController->TryMovePieceRight();
+		}
 	}
 	else if(Axis < 0.f)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Move Piece Left"))
+		if(LeftController)
+		{
+			LeftController->TryMovePieceLeft();
+		}
 	}
 }
 
@@ -132,10 +168,16 @@ void ACuboPawn::MovePieceRightController(float Axis)
 {
 	if(Axis > 0.f)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Move Piece Right"))
+		if(RightController)
+		{
+			RightController->TryMovePieceRight();
+		}
 	}
 	else if(Axis < 0.f)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Move Piece Right"))
+		if(RightController)
+		{
+			RightController->TryMovePieceLeft();
+		}
 	}
 }

@@ -34,4 +34,14 @@ protected:
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	void GrabPressed();
+	void GrabReleased();
+
+	void AcceleratePressed();
+	void AccelerateReleased();
+
+	void TryRotatePiece();
+	void TryMovePieceLeft();
+	void TryMovePieceRight();
 };
