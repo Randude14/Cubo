@@ -45,16 +45,17 @@ void ACuboGrid::Tick(float DeltaTime)
 			int32 Piece = FMath::RandRange(0, GeneratedCuboPieces.Num()-1);
 
 			FCuboPieceInfo CuboPieceInfo = GeneratedCuboPieces[Piece];
-
 			FString Pattern = CuboPieceInfo.PiecePattern;
-			USceneComponent* Cubo = NewObject<USceneComponent>(this, USceneComponent::StaticClass());
-			Cubo->SetupAttachment(RootSceneComponent);
-			Cubo->RegisterComponent();
-			Cubo->SetRelativeLocation(FVector::ZeroVector);
-			Cubos.Add(Cubo);
+			
 
 			if(! Pattern.IsEmpty())
 			{
+				USceneComponent* Cubo = NewObject<USceneComponent>(this, USceneComponent::StaticClass());
+				Cubo->SetupAttachment(RootSceneComponent);
+				Cubo->RegisterComponent();
+				Cubo->SetRelativeLocation(FVector::ZeroVector);
+				Cubos.Add(Cubo);
+				
 				int r = 0, c = 0;
 				for(int i = 0; i < Pattern.Len(); i++)
 				{
