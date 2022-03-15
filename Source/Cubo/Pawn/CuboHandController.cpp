@@ -3,7 +3,8 @@
 
 #include "CuboHandController.h"
 #include "Components/WidgetInteractionComponent.h"
-
+#include "Cubo/CuboFramework/CuboPiece.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ACuboHandController::ACuboHandController()
@@ -33,22 +34,34 @@ ACuboHandController::ACuboHandController()
 void ACuboHandController::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	TArray<AActor*> Grids;
+	UGameplayStatics::GetAllActorsOfClass(this, ACuboGrid::StaticClass(), Grids);
+
+	if(Grids.Num() > 0)
+	{
+		Grid = Cast<ACuboGrid>(Grids[0]);
+	}
 }
 
 // Called every frame
 void ACuboHandController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	
 	UpdateLaserBeam();
+	
+	if(MovingTimer > 0)
+	{
+		MovingTimer -= DeltaTime;
+	}
 }
 
 void ACuboHandController::UpdateLaserBeam()
 {
 	UWorld* World = GetWorld();
 
-	if(World == nullptr)
+	if(World == nullptr || bGrabBeingPressed)
 	{
 		return;
 	}
@@ -64,6 +77,13 @@ void ACuboHandController::UpdateLaserBeam()
 	
 	SelectedActor = ObjectHitResult.GetActor();
 
+	// Don't interfere with other controllers actors
+	if(OtherController->SelectedActor && OtherController->SelectedActor->GetAttachParentActor() == this->SelectedActor)
+	{
+		SelectedActor = nullptr;
+		return;
+	}
+
 	FVector HitLocation = bHitObject ? ObjectHitResult.Location : LaserForward;
 	LaserSpline->SetLocationAtSplinePoint(0, LaserLocation, ESplineCoordinateSpace::World);
 	LaserSpline->SetTangentAtSplinePoint(0, FVector::ZeroVector, ESplineCoordinateSpace::World);
@@ -77,53 +97,92 @@ void ACuboHandController::UpdateLaserBeam()
 	
 	LaserBeam->SetStartAndEnd(LaserPointStart, LaserPointTanStart, LaserPointEnd, LaserPointTanEnd, true);
 
-	if(SelectedActor != CuboBlock)
+	if(SelectedActor != CuboPiece)
 	{
-		if(CuboBlock)
+		if(CuboPiece)
 		{
-			CuboBlock->Unhighlight();
+			CuboPiece->Unhighlight();
 		}
 
-		CuboBlock = Cast<ACuboBlock>(SelectedActor);
-
-		if(CuboBlock)
+		if(SelectedActor)
 		{
-			CuboBlock->Highlight();
+			CuboPiece = Cast<ACuboPiece>(SelectedActor->GetAttachParentActor());
+
+			if(CuboPiece)
+			{
+				CuboPiece->Highlight();
+			}
+		}
+		else
+		{
+			CuboPiece = nullptr;
 		}
 	}
 }
 
 void ACuboHandController::GrabPressed()
 {
-	
+	bGrabBeingPressed = true;
+
+	if(LaserBeam->IsVisible())
+	{
+		LaserBeam->SetVisibility(false);
+	}
 }
 
 void ACuboHandController::GrabReleased()
 {
-	
+	bGrabBeingPressed = false;
+
+	if(! LaserBeam->IsVisible())
+	{
+		LaserBeam->SetVisibility(true);
+	}
 }
 
 void ACuboHandController::AcceleratePressed()
 {
-	
+	if(Grid)
+	{
+		Grid->SetAccelerate(true);
+	}
 }
 
 void ACuboHandController::AccelerateReleased()
 {
-	
+	if(Grid)
+	{
+		Grid->SetAccelerate(false);
+	}
 }
 
 void ACuboHandController::TryRotatePiece()
 {
-	
+	if(CuboPiece)
+	{
+		Grid->TryRotatePiece();
+	}
+}
+
+void ACuboHandController::MovePieceStopped()
+{
+	MovingTimer = 0.f;
 }
 
 void ACuboHandController::TryMovePieceLeft()
 {
-	
+	if(CuboPiece && bGrabBeingPressed && MovingTimer <= 0.f)
+	{
+		Grid->TryMovePiece(false);
+		MovingTimer = ControllerMoveInfo.MovePieceTime;            
+	}
 }
 
 void ACuboHandController::TryMovePieceRight()
 {
-	
+	if(CuboPiece && bGrabBeingPressed && MovingTimer <= 0.f)
+	{
+		Grid->TryMovePiece(true);
+		MovingTimer = ControllerMoveInfo.MovePieceTime;
+	}
 }

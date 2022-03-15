@@ -4,13 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "CuboHandController.h"
-#include "MotionControllerComponent.h"
-#include "Camera/CameraComponent.h"
 #include "GameFramework/Pawn.h"
 #include "CuboPawn.generated.h"
 
 class UMotionControllerComponent;
 class ACuboHandController;
+
 
 UCLASS()
 class CUBO_API ACuboPawn : public APawn
@@ -25,7 +24,7 @@ public:
 	USceneComponent* PawnRootComponent;
 	
 	UPROPERTY(VisibleAnywhere)
-	UCameraComponent* CameraComponent;
+	class UCameraComponent* CameraComponent;
 	
 	UPROPERTY(VisibleAnywhere)
 	UMotionControllerComponent* LeftControllerComponent;

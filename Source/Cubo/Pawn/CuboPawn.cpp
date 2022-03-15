@@ -2,7 +2,8 @@
 
 
 #include "CuboPawn.h"
-
+#include "MotionControllerComponent.h"
+#include "Camera/CameraComponent.h"
 
 // Sets default values
 ACuboPawn::ACuboPawn()
@@ -33,7 +34,7 @@ void ACuboPawn::BeginPlay()
 		RightController->AttachToComponent(RightControllerComponent, FAttachmentTransformRules::KeepRelativeTransform, FName("RightController"));
 		LeftController = GetWorld()->SpawnActor<ACuboHandController>(LeftHandControllerClass);
 		LeftController->AttachToComponent(LeftControllerComponent, FAttachmentTransformRules::KeepRelativeTransform, FName("LeftController"));
-
+		
 		RightController->OtherController = LeftController;
 		LeftController->OtherController = RightController;
 	}
@@ -165,6 +166,10 @@ void ACuboPawn::MovePieceLeftController(float Axis)
 			LeftController->TryMovePieceLeft();
 		}
 	}
+	else if(LeftController)
+	{
+		LeftController->MovePieceStopped();
+	}
 }
 
 void ACuboPawn::MovePieceRightController(float Axis)
@@ -182,5 +187,9 @@ void ACuboPawn::MovePieceRightController(float Axis)
 		{
 			RightController->TryMovePieceLeft();
 		}
+	}
+	else if(RightController)
+	{
+		RightController->MovePieceStopped();
 	}
 }

@@ -6,9 +6,21 @@
 #include "Components/SplineComponent.h"
 #include "Components/SplineMeshComponent.h"
 #include "Components/WidgetInteractionComponent.h"
-#include "Cubo/CuboBlock.h"
+#include "Cubo/CuboFramework/CuboGrid.h"
 #include "GameFramework/Actor.h"
 #include "CuboHandController.generated.h"
+
+class ACuboPiece;
+
+
+USTRUCT()
+struct FControllerMoveInfo
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, Category="Cubo")
+	float MovePieceTime=0.5;
+};
 
 UCLASS()
 class CUBO_API ACuboHandController : public AActor
@@ -31,11 +43,18 @@ public:
 	UPROPERTY(EditAnywhere)
 	USplineMeshComponent* LaserBeam;
 
+	UPROPERTY(EditAnywhere)
+	FControllerMoveInfo ControllerMoveInfo;
+
 	UPROPERTY(EditAnywhere, Category="Cubo")
 	float MaxLaserDistance;
 
 	UPROPERTY()
 	ACuboHandController* OtherController;
+
+protected:
+	float MovingTimer;
+	bool bGrabBeingPressed = false;
 
 protected:
 	// Called when the game starts or when spawned
@@ -47,7 +66,10 @@ protected:
 	AActor* SelectedActor;
 
 	UPROPERTY()
-	ACuboBlock* CuboBlock;
+	ACuboPiece* CuboPiece;
+
+	UPROPERTY()
+	ACuboGrid* Grid;
 
 public:
 	// Called every frame
@@ -60,6 +82,8 @@ public:
 	void AccelerateReleased();
 
 	void TryRotatePiece();
+
+	void MovePieceStopped();
 	void TryMovePieceLeft();
 	void TryMovePieceRight();
 };
