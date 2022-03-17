@@ -78,6 +78,67 @@ float ACuboPiece::GetLeftOf(FVector Location)
 	return CheckLeft;
 }
 
+float ACuboPiece::GetRightOf(FVector Location)
+{
+	float CheckRight = 0.f;
+	
+	for(ACuboBlock* Block : Blocks)
+	{
+		FVector RelativeLocation = Block->GetActorLocation() - Location;
+		
+		CheckRight = FMath::Max(CheckRight, RelativeLocation.Y);
+	}
+
+	return CheckRight;
+}
+
+float ACuboPiece::GetTotalHeight()
+{
+	float MinZ = 0.f;
+	float MaxZ = 0.f;
+	FVector Location = GetActorLocation();
+	
+	for(ACuboBlock* Block : Blocks)
+	{
+		FVector RelativeLocation = Block->GetActorLocation() - Location;
+		
+		MinZ = FMath::Min(MinZ, RelativeLocation.Z);
+		MaxZ = FMath::Max(MaxZ, RelativeLocation.Z);
+	}
+
+	return MaxZ - MinZ;
+}
+
+float ACuboPiece::GetHeightBelowAnchor()
+{
+	float MinZ = 0.f;
+	FVector Location = GetActorLocation();
+	
+	for(ACuboBlock* Block : Blocks)
+	{
+		FVector RelativeLocation = Block->GetActorLocation() - Location;
+		
+		MinZ = FMath::Min(MinZ, RelativeLocation.Z);
+	}
+
+	return FMath::Abs(MinZ);
+}
+
+float ACuboPiece::GetHeightAboveAnchor()
+{
+	float MaxZ = 0.f;
+	FVector Location = GetActorLocation();
+	
+	for(ACuboBlock* Block : Blocks)
+	{
+		FVector RelativeLocation = Block->GetActorLocation() - Location;
+		
+		MaxZ = FMath::Max(MaxZ, RelativeLocation.Z);
+	}
+
+	return MaxZ;
+}
+
 FVector ACuboPiece::GetDownDirection()
 {
 	switch(Rotate)

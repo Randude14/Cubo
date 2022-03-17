@@ -49,6 +49,10 @@ public:
 	FVector GetDownDirection();
 	FVector GetRightDirection();
 	float GetLeftOf(FVector Location);
+	float GetRightOf(FVector Location);
+	float GetTotalHeight();
+	float GetHeightBelowAnchor();
+	float GetHeightAboveAnchor();
 
 	void AddPieceOffset(FVector Offset);
 };

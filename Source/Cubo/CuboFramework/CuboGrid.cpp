@@ -39,7 +39,7 @@ void ACuboGrid::Tick(float DeltaTime)
 
 		if(! FMath::IsNearlyZero(CheckLet))
 		{
-			CurrentPiece->AddPieceOffset(FVector(0.f, CheckLet, 0.f));
+			CurrentPiece->AddPieceOffset(FVector(0.f, -CheckLet, 0.f));
 		}
 	}
 

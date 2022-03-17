@@ -26,10 +26,11 @@ void ACuboPieceQueue::SpawnPiece()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("No generated cubo pieces found for ACuboPieceQueue '%s'"), *GetName());
 	}
-	int32 Piece = FMath::RandRange(0, GeneratedCuboPieces.Num()-1);
+	int32 ChosenPiece = FMath::RandRange(0, GeneratedCuboPieces.Num()-1);
 
-	FCuboPieceInfo CuboPieceInfo = GeneratedCuboPieces[Piece];
+	FCuboPieceInfo CuboPieceInfo = GeneratedCuboPieces[ChosenPiece];
 	FString Pattern = CuboPieceInfo.PiecePattern;
+	
 	
 	if(! Pattern.IsEmpty())
 	{
@@ -39,8 +40,6 @@ void ACuboPieceQueue::SpawnPiece()
 			Cubo->AttachToActor(this, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 			FVector AnchorPos = FVector::ZeroVector;
 			bool bPieceShouldRotate = false;
-		
-			CuboPieces.Add(Cubo);
 
 			TArray<ACuboBlock*> Blocks; 
 		
@@ -92,15 +91,18 @@ void ACuboPieceQueue::SpawnPiece()
 				}
 			}
 
-			float AllocateSpace = (c + BlocksBetween) * PieceMoveInfo.BlockSpace;
-
-			for(ACuboPiece* CuboPiece : CuboPieces)
+			if(CuboPieces.Num() > 1)
 			{
-				CuboPiece->AddActorLocalOffset(FVector(0.f, 0.f, AllocateSpace));
+				ACuboPiece* PieceBefore = CuboPieces.Last();
+				
+				float RelativeHeight = GetActorLocation().Z - PieceBefore->GetActorLocation().Z;
+				float LastPieceHeight = (BlocksBetween * PieceMoveInfo.BlockSpace) + RelativeHeight;
+				Cubo->SetActorRelativeLocation( FVector(0.f, 0.f, -LastPieceHeight) );
 			}
-			
-			
-			Cubo->SetActorRelativeLocation( FVector::ZeroVector );
+
+			CuboPieces.Add(Cubo);
+			float CheckLeft = Cubo->GetLeftOf(GetActorLocation());
+			Cubo->AddPieceOffset(FVector(0.f, CheckLeft, 0.f));
 			Cubo->Init(bPieceShouldRotate);
 		}
 	}
@@ -117,6 +119,21 @@ ACuboPiece* ACuboPieceQueue::PopPiece()
 	if(CuboPieces.Num() > 0)
 	{
 		ACuboPiece* Popped = CuboPieces[0];
+
+		if(CuboPieces.Num() > 1)
+		{
+			ACuboPiece* NextPiece = CuboPieces[1];
+			float MoveUpBy = GetActorLocation().Z - NextPiece->GetActorLocation().Z;
+			FVector MoveVector = FVector(0.f, 0.f, MoveUpBy);
+			NextPiece->AddPieceOffset(MoveVector);
+				
+			for(int i = 2; i < CuboPieces.Num(); i++)
+			{
+				ACuboPiece* Piece = CuboPieces[i];
+				Piece->AddPieceOffset(MoveVector);
+			}
+		}
+		
 		CuboPieces.RemoveAt(0);
 
 		SpawnPiece();
