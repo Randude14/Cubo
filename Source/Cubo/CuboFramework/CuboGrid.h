@@ -30,6 +30,9 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	UChildActorComponent* PieceQueueComponent;
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<ACuboBlock> HighlightBlockClass;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Cubo")
 	int32 GridWidth=10;
 
@@ -54,6 +57,9 @@ protected:
 	UPROPERTY()
 	ACuboPiece* CurrentPiece;
 
+	UPROPERTY()
+	ACuboPiece* HighlighterPiece;
+
 	bool bShouldAccelerate = false;
 	float PieceMoveTimer = 0.f;
 
@@ -70,11 +76,13 @@ protected:
 	void SetBlock(FCuboGridLocation Pos, ACuboBlock* Block);
 	void SetBlock(int Row, int Col, ACuboBlock* Block);
 
-	bool TryMovePieceDown();
+	bool TryMovePieceDown(ACuboPiece* Piece, bool bSpawnBlocks=true);
 
-	bool IsPieceInLegalSpot();
+	bool IsPieceInLegalSpot(ACuboPiece* Piece);
 
 	FCuboGridLocation ConvertToGridSpace(FVector Location);
+
+	void UpdateHighlighter();
 
 public:
 	void SetAccelerate(bool bAccelerate);

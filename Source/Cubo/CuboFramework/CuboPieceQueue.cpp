@@ -67,7 +67,7 @@ void ACuboPieceQueue::SpawnPiece()
 						Blocks.Add(CuboBlock);
 
 					}
-					}
+				}
 				else if(Pattern[j] == ' ')
 				{
 					// new row, reset row and move to next column

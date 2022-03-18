@@ -63,3 +63,9 @@ void ACuboBlock::SetColor(const FLinearColor& CubeColor)
 		Color = CubeColor;
 	}
 }
+
+FLinearColor ACuboBlock::GetColor() const
+{
+	return Color;
+}
+

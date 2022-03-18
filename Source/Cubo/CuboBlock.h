@@ -18,13 +18,13 @@ public:
 	void Highlight();
 	void Unhighlight();
 
-	UPROPERTY(EditAnywhere, Category="Cubo")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Cubo")
 	FName ColorParam;
 
-	UPROPERTY(EditAnywhere, Category="Cubo")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Cubo")
 	FName HighlightParam;
 
-	UPROPERTY(EditAnywhere, Category="Cubo")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Cubo")
 	float HighlightPercentage;
 
 protected:
@@ -37,4 +37,6 @@ protected:
 public:	
 	UFUNCTION(BlueprintCallable)
 	void SetColor(const FLinearColor& CubeColor);
+
+	FLinearColor GetColor() const;
 };

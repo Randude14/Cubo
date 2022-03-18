@@ -1,5 +1,6 @@
 ﻿
 #include "CuboGrid.h"
+
 #include "CuboPiece.h"
 #include "DrawDebugHelpers.h"
 
@@ -28,6 +29,17 @@ void ACuboGrid::BeginPlay()
 	else
 	{
 		TinyPieceOffset = 1.f / PieceQueue->PieceMoveInfo.BlockSpace;
+
+		HighlighterPiece = GetWorld()->SpawnActor<ACuboPiece>();
+		HighlighterPiece->AttachToActor(this, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+
+		for(int i = 0; i < 4; i++)
+		{
+			ACuboBlock* Block = GetWorld()->SpawnActor<ACuboBlock>(HighlightBlockClass);
+			Block->AttachToActor(HighlighterPiece, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+		}
+
+		HighlighterPiece->Init(false);
 	}
 }
 
@@ -46,13 +58,17 @@ void ACuboGrid::Tick(float DeltaTime)
 		{
 			CurrentPiece->AddPieceOffset(FVector(0.f, -CheckLet, 0.f));
 		}
+
+		UpdateHighlighter();
 	}
 
 	PieceMoveTimer -= DeltaTime;
 
 	if(PieceMoveTimer < 0)
 	{
-		if(! TryMovePieceDown())
+		PieceMoveTimer += (bShouldAccelerate) ? PieceQueue->PieceMoveInfo.AccelerateTime : PieceQueue->PieceMoveInfo.NormalTime;
+		
+		if(! TryMovePieceDown(CurrentPiece))
 		{
 			CurrentPiece = nullptr;
 		}
@@ -81,6 +97,59 @@ void ACuboGrid::Tick(float DeltaTime)
 	}
 }
 
+void ACuboGrid::UpdateHighlighter()
+{
+	if(HighlighterPiece)
+	{
+		if(CurrentPiece)
+		{
+			if(HighlighterPiece->IsHidden())
+			{
+				HighlighterPiece->SetActorHiddenInGame(false);
+			}
+			
+			HighlighterPiece->SetActorHiddenInGame(false);
+			TArray<ACuboBlock*> Blocks;
+			CurrentPiece->GetBlocks(Blocks);
+
+			TArray<ACuboBlock*> HighlightingBlocks;
+			HighlighterPiece->GetBlocks(HighlightingBlocks);
+
+			// match blocks of the current piece
+			for(int i = 0; i < HighlightingBlocks.Num(); i++)
+			{
+				ACuboBlock* HBlock = HighlightingBlocks[i];
+				
+				if(i < HighlightingBlocks.Num())
+				{
+					ACuboBlock* Block = Blocks[i];
+					HBlock->SetActorHiddenInGame(false);
+					HBlock->SetActorScale3D(Block->GetActorScale());
+					HBlock->SetActorLocation(Block->GetActorLocation());
+					HBlock->SetColor(Block->GetColor());
+				}
+				else
+				{
+					HBlock->SetActorHiddenInGame(true);
+				}
+			}
+
+			FVector Location = HighlighterPiece->GetActorLocation();
+			
+			while( TryMovePieceDown(HighlighterPiece, false) )
+			{
+				Location = HighlighterPiece->GetActorLocation();
+			}
+			
+			HighlighterPiece->SetActorLocation(Location);
+		}
+		else if(! HighlighterPiece->IsHidden())
+		{
+			HighlighterPiece->SetActorHiddenInGame(true);
+		}
+	}
+}
+
 // Player controls
 
 void ACuboGrid::TryMovePiece(bool bRight)
@@ -92,54 +161,64 @@ void ACuboGrid::TryMovePiece(bool bRight)
 		FVector CurrentLoc = CurrentPiece->GetActorLocation();
 		CurrentPiece->AddPieceOffset(FVector(0.f, MoveDistance, 0.f));
 
-		if(! IsPieceInLegalSpot())
+		if(! IsPieceInLegalSpot(CurrentPiece))
 		{
 			// Move piece back if it's not legal
 			CurrentPiece->SetActorLocation(CurrentLoc);
 		}
+		else
+		{
+			UpdateHighlighter();
+		}
 	}
 }
 
-bool ACuboGrid::TryMovePieceDown()
+bool ACuboGrid::TryMovePieceDown(ACuboPiece* Piece, bool bSpawnBlocks)
 {
-	if(CurrentPiece)
+	if(Piece)
 	{
 		FPieceMoveInfo PieceMoveInfo = PieceQueue->PieceMoveInfo;
-		PieceMoveTimer += (bShouldAccelerate) ? PieceMoveInfo.AccelerateTime : PieceMoveInfo.NormalTime;
-		FVector CurrentLoc = CurrentPiece->GetActorLocation();
-		CurrentPiece->AddPieceOffset(FVector(0.f, 0.f, -PieceMoveInfo.GetMoveDistance()));
+		FVector CurrentLoc = Piece->GetActorLocation();
+		Piece->AddPieceOffset(FVector(0.f, 0.f, -PieceMoveInfo.GetMoveDistance()));
 		
-		if(! IsPieceInLegalSpot())
+		if(! IsPieceInLegalSpot(Piece))
 		{
-			CurrentPiece->SetActorLocation(CurrentLoc);
-
-			TArray<ACuboBlock*> Blocks;
-			CurrentPiece->GetBlocks(Blocks);
-			FVector GridLocation = GetActorLocation();
-
-			for(ACuboBlock* Block : Blocks)
+			if(bSpawnBlocks)
 			{
-				FVector BlockLocation = Block->GetActorLocation();
-				FVector Relative = BlockLocation - GridLocation;
+				Piece->SetActorLocation(CurrentLoc);
+
+				TArray<ACuboBlock*> Blocks;
+				Piece->GetBlocks(Blocks);
+				FVector GridLocation = GetActorLocation();
+
+				for(ACuboBlock* Block : Blocks)
+				{
+					FVector BlockLocation = Block->GetActorLocation();
+					FVector Relative = BlockLocation - GridLocation;
 				
-				FCuboGridLocation PieceGridLocation = ConvertToGridSpace(Relative);
+					FCuboGridLocation PieceGridLocation = ConvertToGridSpace(Relative);
 
-   				SetBlock(PieceGridLocation, Block);
+					SetBlock(PieceGridLocation, Block);
+				}
+
+				Piece->Destroy();
 			}
-
-			CurrentPiece->Destroy();
 			return false;
 		}
 	}
 	return true;
 }
 
-bool ACuboGrid::IsPieceInLegalSpot()
+bool ACuboGrid::IsPieceInLegalSpot(ACuboPiece* Piece)
 {
-	if(CurrentPiece)
+	if(Piece)
 	{
 		TArray<ACuboBlock*> Blocks;
-		CurrentPiece->GetBlocks(Blocks);
+		Piece->GetBlocks(Blocks);
+		if(Blocks.Num() == 0)
+		{
+			return false;
+		}
 		int BlockSpacing = FMath::RoundToInt(PieceQueue->PieceMoveInfo.BlockSpace);
 
 		for(ACuboBlock* Block : Blocks)
@@ -228,11 +307,15 @@ void ACuboGrid::TryRotatePiece()
 
 			CurrentLoc = CurrentPiece->GetActorLocation();
 
-			if(! IsPieceInLegalSpot())
+			if(! IsPieceInLegalSpot(CurrentPiece))
 			{
 				// Move piece back if it is not in a legal spot
 				CurrentPiece->SetActorLocation(CurrentLoc);
 				CurrentPiece->SetRotate(CurrentRot);
+			}
+			else
+			{
+				UpdateHighlighter();
 			}
 		}
 	}
