@@ -31,13 +31,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Cubo")
 	int32 GridHeight=20;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Cubo")
-	float SpawnTime = 5.f;
-
-	// The amount of pieces that are sitting idle
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Cubo")
-	int32 IdlePieces = 5;
-
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -54,7 +47,10 @@ protected:
 
 	bool bShouldAccelerate = false;
 	float PieceMoveTimer = 0.f;
-	float Timer = 0.f;
+
+	// used when determine legal spots for the cubo pieces
+	// helps account for rounding errors when dealing with floats in grid spaces
+	float TinyPieceOffset;
 	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

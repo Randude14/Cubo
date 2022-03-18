@@ -2,6 +2,8 @@
 
 
 #include "CuboPawn.h"
+
+#include "HeadMountedDisplayFunctionLibrary.h"
 #include "MotionControllerComponent.h"
 #include "Camera/CameraComponent.h"
 
@@ -13,6 +15,9 @@ ACuboPawn::ACuboPawn()
 
 	PawnRootComponent = CreateDefaultSubobject<USceneComponent>("PawnRootComponent");
 	SetRootComponent(PawnRootComponent);
+
+	KbmCameraLocation = CreateDefaultSubobject<USceneComponent>("KbmCameraLocation");
+	KbmCameraLocation->SetupAttachment(PawnRootComponent);
 	
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>("VRCameraComponent");
 	CameraComponent->SetupAttachment(PawnRootComponent);
@@ -37,6 +42,11 @@ void ACuboPawn::BeginPlay()
 		
 		RightController->OtherController = LeftController;
 		LeftController->OtherController = RightController;
+	}
+
+	if(! UHeadMountedDisplayFunctionLibrary::IsHeadMountedDisplayConnected())
+	{
+		CameraComponent->SetRelativeLocation( KbmCameraLocation->GetRelativeLocation() );
 	}
 }
 

@@ -22,6 +22,9 @@ public:
 
 	UPROPERTY(VisibleAnywhere)
 	USceneComponent* PawnRootComponent;
+
+	UPROPERTY(VisibleAnywhere)
+	USceneComponent* KbmCameraLocation;
 	
 	UPROPERTY(VisibleAnywhere)
 	class UCameraComponent* CameraComponent;

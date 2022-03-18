@@ -25,6 +25,10 @@ void ACuboGrid::BeginPlay()
 	{
 		UE_LOG(LogTemp, Error, TEXT("Failed to find ACuboPieceQueue for %s"), *GetName())
 	}
+	else
+	{
+		TinyPieceOffset = PieceQueue->PieceMoveInfo.BlockSpace / 1.f;
+	}
 }
 
 // Called every frame
@@ -52,13 +56,6 @@ void ACuboGrid::Tick(float DeltaTime)
 		{
 			CurrentPiece = nullptr;
 		}
-	}
-	
-	Timer -= DeltaTime;
-
-	if(Timer < 0.f)
-	{
-		Timer = SpawnTime;
 	}
 }
 
@@ -100,10 +97,10 @@ bool ACuboGrid::TryMovePieceDown()
 			for(ACuboBlock* Block : Blocks)
 			{
 				FVector Relative = Block->GetActorLocation() - GetActorLocation();
-				Relative.Z = FMath::Abs( Relative.Z );
+				Relative.Z = FMath::Abs( Relative.Z ) + TinyPieceOffset;
 
 				FVector2D PieceGridLocation;
-				PieceGridLocation.X = FMath::FloorToInt(Relative.Y / PieceQueue->PieceMoveInfo.BlockSpace);
+				PieceGridLocation.X = FMath::RoundToInt(Relative.Y / PieceQueue->PieceMoveInfo.BlockSpace);
 				PieceGridLocation.Y = FMath::FloorToInt(Relative.Z / PieceQueue->PieceMoveInfo.BlockSpace);
 
 				SetBlock(PieceGridLocation, Block);
@@ -128,13 +125,13 @@ bool ACuboGrid::IsPieceInLegalSpot()
 		for(ACuboBlock* Block : Blocks)
 		{
 			FVector Relative = Block->GetActorLocation() - GetActorLocation();
-			Relative.Z = FMath::Abs( Relative.Z );
+			Relative.Z = FMath::Abs( Relative.Z ) + TinyPieceOffset;
 
 			FVector2D PieceGridLocation;
-			PieceGridLocation.X = FMath::FloorToInt(Relative.Y / PieceQueue->PieceMoveInfo.BlockSpace);
+			PieceGridLocation.X = FMath::RoundToInt(Relative.Y / PieceQueue->PieceMoveInfo.BlockSpace);
 			PieceGridLocation.Y = FMath::CeilToInt(Relative.Z / PieceQueue->PieceMoveInfo.BlockSpace);
 
-			if(IsBlockHere(PieceGridLocation) || PieceGridLocation.Y > (GridHeight-1) )
+			if(IsBlockHere(PieceGridLocation) || PieceGridLocation.Y > GridHeight )
 			{
 				return false;
 			}
@@ -147,30 +144,32 @@ void ACuboGrid::TryRotatePiece()
 {
 	if(CurrentPiece)
 	{
-		int CurrentRot = CurrentPiece->GetRotate();
-		int Rotate = CurrentRot + 1;
-		FVector CurrentLoc = CurrentPiece->GetActorLocation();
-
-		if(Rotate == 4)
+		if(CurrentPiece->CanRotate())
 		{
-			Rotate = 0;
-		}
-		CurrentPiece->SetRotate(Rotate);
+			int CurrentRot = CurrentPiece->GetRotate();
+			int Rotate = CurrentRot + 1;
+			FVector CurrentLoc = CurrentPiece->GetActorLocation();
 
-		FVector PieceLocation = GetActorLocation();
-		float CheckLeft = CurrentPiece->GetLeftOf(GetActorLocation());
+			if(Rotate == 4)
+			{
+				Rotate = 0;
+			}
+			CurrentPiece->SetRotate(Rotate);
 
-		if(! FMath::IsNearlyZero(CheckLeft))
-		{
-			CurrentPiece->AddPieceOffset(FVector(0.f, -CheckLeft, 0.f));
-			CurrentLoc = CurrentPiece->GetActorLocation();
-		}
+			float CheckLeft = CurrentPiece->GetLeftOf(GetActorLocation());
 
-		if(! IsPieceInLegalSpot())
-		{
-			// Move piece back if it is not in a legal spot
-			CurrentPiece->SetActorLocation(CurrentLoc);
-			CurrentPiece->SetRotate(CurrentRot);
+			if(! FMath::IsNearlyZero(CheckLeft))
+			{
+				CurrentPiece->AddPieceOffset(FVector(0.f, -CheckLeft, 0.f));
+				CurrentLoc = CurrentPiece->GetActorLocation();
+			}
+
+			if(! IsPieceInLegalSpot())
+			{
+				// Move piece back if it is not in a legal spot
+				CurrentPiece->SetActorLocation(CurrentLoc);
+				CurrentPiece->SetRotate(CurrentRot);
+			}
 		}
 	}
 }

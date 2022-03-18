@@ -2,6 +2,7 @@
 
 
 #include "CuboHandController.h"
+#include "HeadMountedDisplayFunctionLibrary.h"
 #include "Components/WidgetInteractionComponent.h"
 #include "Cubo/CuboFramework/CuboPiece.h"
 #include "Kismet/GameplayStatics.h"
@@ -42,6 +43,18 @@ void ACuboHandController::BeginPlay()
 	{
 		Grid = Cast<ACuboGrid>(Grids[0]);
 	}
+
+	UseKbm = ! UHeadMountedDisplayFunctionLibrary::IsHeadMountedDisplayConnected();
+
+	if(UseKbm)
+	{
+		LaserBeam->SetVisibility(false);
+	}
+}
+
+bool ACuboHandController::IsControllerGrabbing()
+{
+	return bGrabBeingPressed || UseKbm;
 }
 
 // Called every frame
@@ -61,7 +74,7 @@ void ACuboHandController::UpdateLaserBeam()
 {
 	UWorld* World = GetWorld();
 
-	if(World == nullptr || bGrabBeingPressed)
+	if(World == nullptr || IsControllerGrabbing())
 	{
 		return;
 	}
@@ -158,7 +171,7 @@ void ACuboHandController::AccelerateReleased()
 
 void ACuboHandController::TryRotatePiece()
 {
-	if(CuboPiece)
+	if(Grid)
 	{
 		Grid->TryRotatePiece();
 	}
@@ -171,7 +184,7 @@ void ACuboHandController::MovePieceStopped()
 
 void ACuboHandController::TryMovePieceLeft()
 {
-	if(CuboPiece && bGrabBeingPressed && MovingTimer <= 0.f)
+	if(Grid && IsControllerGrabbing() && MovingTimer <= 0.f)
 	{
 		Grid->TryMovePiece(false);
 		MovingTimer = ControllerMoveInfo.MovePieceTime;            
@@ -180,7 +193,7 @@ void ACuboHandController::TryMovePieceLeft()
 
 void ACuboHandController::TryMovePieceRight()
 {
-	if(CuboPiece && bGrabBeingPressed && MovingTimer <= 0.f)
+	if(Grid && IsControllerGrabbing() && MovingTimer <= 0.f)
 	{
 		Grid->TryMovePiece(true);
 		MovingTimer = ControllerMoveInfo.MovePieceTime;

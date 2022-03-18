@@ -45,6 +45,7 @@ public:
 
 	int GetRotate();
 	void SetRotate(int Rot);
+	bool CanRotate() { return bRotateEnabled; }
 	
 	FVector GetDownDirection();
 	FVector GetRightDirection();

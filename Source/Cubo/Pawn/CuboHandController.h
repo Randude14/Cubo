@@ -53,14 +53,18 @@ public:
 	ACuboHandController* OtherController;
 
 protected:
-	float MovingTimer;
-	bool bGrabBeingPressed = false;
-
-protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 	void UpdateLaserBeam();
+
+	bool IsControllerGrabbing();
+
+
+protected:
+	float MovingTimer;
+	bool bGrabBeingPressed = false;
+	bool UseKbm = false;
 
 	UPROPERTY()
 	AActor* SelectedActor;

@@ -52,10 +52,6 @@ void ACuboPiece::BeginPlay()
 void ACuboPiece::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	if(bInit)
-	{
-	}
 }
 
 void ACuboPiece::AddPieceOffset(FVector Offset)
@@ -179,7 +175,7 @@ int ACuboPiece::GetRotate()
 void ACuboPiece::SetRotate(int Rot)
 {
 	Rotate = FMath::Clamp(Rot, 0, 3);
-	FRotator Rotation;
+	FRotator Rotation(0.f);
 	Rotation.Roll = Rotate * 90;
 	SetActorRelativeRotation(Rotation);
 }
