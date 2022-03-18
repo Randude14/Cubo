@@ -54,5 +54,7 @@ public:
 	float GetHeightBelowAnchor();
 	float GetHeightAboveAnchor();
 
+	void GetBlocks(TArray<ACuboBlock*>&);
+
 	void AddPieceOffset(FVector Offset);
 };

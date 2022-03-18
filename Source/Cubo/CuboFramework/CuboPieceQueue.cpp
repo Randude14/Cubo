@@ -54,7 +54,7 @@ void ACuboPieceQueue::SpawnPiece()
 						CuboBlock->AttachToActor(Cubo, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 						CuboBlock->SetColor(CuboPieceInfo.CubeColor);
 						CuboBlock->SetActorScale3D(BlockScale);
-						FVector Location(0.f, r * PieceMoveInfo.BlockSpace, c * PieceMoveInfo.BlockSpace); // ignore X
+						FVector Location(0.f, r * PieceMoveInfo.BlockSpace, - c * PieceMoveInfo.BlockSpace); // ignore X
 						r++;
 
 						if(Pattern[j] == 'A')
@@ -96,7 +96,7 @@ void ACuboPieceQueue::SpawnPiece()
 				ACuboPiece* PieceBefore = CuboPieces.Last();
 				
 				float RelativeHeight = GetActorLocation().Z - PieceBefore->GetActorLocation().Z;
-				float LastPieceHeight = (BlocksBetween * PieceMoveInfo.BlockSpace) + RelativeHeight;
+				float LastPieceHeight = ((BlocksBetween+1) * PieceMoveInfo.BlockSpace) + RelativeHeight;
 				Cubo->SetActorRelativeLocation( FVector(0.f, 0.f, -LastPieceHeight) );
 			}
 

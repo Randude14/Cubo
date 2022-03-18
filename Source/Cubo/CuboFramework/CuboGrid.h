@@ -46,6 +46,7 @@ protected:
 	ACuboPieceQueue* PieceQueue;
 
 	// Grid is represented as a map, 2d positions are referenced as an index by i = r*width + c
+	UPROPERTY()
 	TMap<int32, ACuboBlock*> Grid;
 
 	UPROPERTY()
@@ -58,13 +59,15 @@ protected:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	bool IsPieceHere(FVector2D Pos);
-	bool IsPieceHere(int Row, int Col);
+	bool IsBlockHere(FVector2D Pos);
+	bool IsBlockHere(int Row, int Col);
 
-	bool SetPiece(int Row, int Col, ACuboPiece* Piece);
+	void SetBlock(FVector2D Pos, ACuboBlock* Block);
+	void SetBlock(int Row, int Col, ACuboBlock* Block);
 
 	bool TryMovePieceDown();
 
+	bool IsPieceInLegalSpot();
 
 public:
 	void SetAccelerate(bool bAccelerate);

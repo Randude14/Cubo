@@ -124,6 +124,14 @@ float ACuboPiece::GetHeightBelowAnchor()
 	return FMath::Abs(MinZ);
 }
 
+void ACuboPiece::GetBlocks(TArray<ACuboBlock*>& OutputArray)
+{
+	for(ACuboBlock* Block : Blocks)
+	{
+		OutputArray.Add(Block);
+	}
+}
+
 float ACuboPiece::GetHeightAboveAnchor()
 {
 	float MaxZ = 0.f;
