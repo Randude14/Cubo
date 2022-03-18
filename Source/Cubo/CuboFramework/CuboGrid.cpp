@@ -1,7 +1,7 @@
 ﻿
 #include "CuboGrid.h"
 #include "CuboPiece.h"
-#include "FileCache.h"
+#include "DrawDebugHelpers.h"
 
 ACuboGrid::ACuboGrid()
 {
@@ -27,7 +27,7 @@ void ACuboGrid::BeginPlay()
 	}
 	else
 	{
-		TinyPieceOffset = PieceQueue->PieceMoveInfo.BlockSpace / 1.f;
+		TinyPieceOffset = 1.f / PieceQueue->PieceMoveInfo.BlockSpace;
 	}
 }
 
@@ -55,6 +55,28 @@ void ACuboGrid::Tick(float DeltaTime)
 		if(! TryMovePieceDown())
 		{
 			CurrentPiece = nullptr;
+		}
+	}
+
+	if(bShowGridSpaces)
+	{
+		TArray<int> Keys;
+		Grid.GetKeys(Keys);
+
+		for(int Index : Keys)
+		{
+			// int Index = GridHeight * Row + Col;
+
+			int i = Index;
+			int r = 0;
+			while(i > GridHeight) {r++; i-= GridHeight;}
+			int c = Index - r * GridHeight;
+
+			FVector GridLocation = GetActorLocation();
+			FVector IndexLocation = FVector(0.f, r * PieceQueue->PieceMoveInfo.BlockSpace, - c * PieceQueue->PieceMoveInfo.BlockSpace) + GridLocation;
+			FVector IndexOutLocation = IndexLocation + FVector(-200.f, 0.f, 0.f);
+
+			DrawDebugLine(GetWorld(), IndexLocation, IndexOutLocation, FColor::Red, true, -1, 0, 5.f);
 		}
 	}
 }
@@ -93,19 +115,16 @@ bool ACuboGrid::TryMovePieceDown()
 
 			TArray<ACuboBlock*> Blocks;
 			CurrentPiece->GetBlocks(Blocks);
+			FVector GridLocation = GetActorLocation();
 
 			for(ACuboBlock* Block : Blocks)
 			{
-				FVector Relative = Block->GetActorLocation() - GetActorLocation();
-				Relative.Z = FMath::Abs( Relative.Z ) + TinyPieceOffset;
+				FVector BlockLocation = Block->GetActorLocation();
+				FVector Relative = BlockLocation - GridLocation;
+				
+				FCuboGridLocation PieceGridLocation = ConvertToGridSpace(Relative);
 
-				FVector2D PieceGridLocation;
-				PieceGridLocation.X = FMath::RoundToInt(Relative.Y / PieceQueue->PieceMoveInfo.BlockSpace);
-				PieceGridLocation.Y = FMath::FloorToInt(Relative.Z / PieceQueue->PieceMoveInfo.BlockSpace);
-
-				SetBlock(PieceGridLocation, Block);
-				Block->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
-				Block->Unhighlight();
+   				SetBlock(PieceGridLocation, Block);
 			}
 
 			CurrentPiece->Destroy();
@@ -121,23 +140,53 @@ bool ACuboGrid::IsPieceInLegalSpot()
 	{
 		TArray<ACuboBlock*> Blocks;
 		CurrentPiece->GetBlocks(Blocks);
+		int BlockSpacing = FMath::RoundToInt(PieceQueue->PieceMoveInfo.BlockSpace);
 
 		for(ACuboBlock* Block : Blocks)
 		{
 			FVector Relative = Block->GetActorLocation() - GetActorLocation();
-			Relative.Z = FMath::Abs( Relative.Z ) + TinyPieceOffset;
 
-			FVector2D PieceGridLocation;
-			PieceGridLocation.X = FMath::RoundToInt(Relative.Y / PieceQueue->PieceMoveInfo.BlockSpace);
-			PieceGridLocation.Y = FMath::CeilToInt(Relative.Z / PieceQueue->PieceMoveInfo.BlockSpace);
+			FCuboGridLocation PieceGridLocation = ConvertToGridSpace(Relative);
 
-			if(IsBlockHere(PieceGridLocation) || PieceGridLocation.Y > GridHeight )
+			if(IsBlockHere(PieceGridLocation) || PieceGridLocation.Y > (GridHeight-1) || (PieceGridLocation.X < 0 || PieceGridLocation.X >= GridWidth)  )
 			{
 				return false;
+			}
+			
+			int BlockZ = FMath::RoundToInt(Relative.Z);
+
+			// check spacing above in case of rotation pieces and side movements
+			if(BlockZ % BlockSpacing != 0)
+			{
+				PieceGridLocation.Y -= 1;
+				
+				if(IsBlockHere(PieceGridLocation))
+				{
+					return false;
+				}
 			}
 		}
 	}
 	return true;
+}
+
+FCuboGridLocation ACuboGrid::ConvertToGridSpace(FVector Location)
+{
+	Location.Z = FMath::Abs( Location.Z ) + PieceQueue->PieceMoveInfo.GetMoveDistance() / 2.f;
+
+	float RawGridY = Location.Z / PieceQueue->PieceMoveInfo.BlockSpace;
+	FCuboGridLocation GridSpaceLocation;
+	GridSpaceLocation.X = FMath::RoundToInt(Location.Y / PieceQueue->PieceMoveInfo.BlockSpace);
+	GridSpaceLocation.Y = FMath::FloorToInt( RawGridY );
+
+	float RoundedOff = RawGridY - FMath::FloorToInt(RawGridY);
+
+	if(RoundedOff > PieceQueue->PieceMoveInfo.MovePieceBy)
+	{
+		GridSpaceLocation.Y += 1;
+	}
+
+	return GridSpaceLocation;
 }
 
 void ACuboGrid::TryRotatePiece()
@@ -156,13 +205,28 @@ void ACuboGrid::TryRotatePiece()
 			}
 			CurrentPiece->SetRotate(Rotate);
 
+			FVector RightBorder = GetActorLocation() + FVector(0.f, (PieceQueue->PieceMoveInfo.BlockSpace) * (GridWidth-1), 0.f);
+			float CheckRight = CurrentPiece->GetRightOf(RightBorder);
 			float CheckLeft = CurrentPiece->GetLeftOf(GetActorLocation());
+		
+			bool bIsRight = ! FMath::IsNearlyZero(CheckRight);
+			bool bIsLeft = ! FMath::IsNearlyZero(CheckLeft);
 
-			if(! FMath::IsNearlyZero(CheckLeft))
+			if(bIsRight && bIsLeft)
+			{
+				UE_LOG(LogTemp, Error, TEXT("Rotated piece somehow outside of bounds on both sides? GridWidth is either too low or piece is too wide."));
+			}
+			else if(bIsRight)
+			{
+				CurrentPiece->AddPieceOffset(FVector(0.f, -CheckRight, 0.f));
+				
+			}
+			else if(bIsLeft)
 			{
 				CurrentPiece->AddPieceOffset(FVector(0.f, -CheckLeft, 0.f));
-				CurrentLoc = CurrentPiece->GetActorLocation();
 			}
+
+			CurrentLoc = CurrentPiece->GetActorLocation();
 
 			if(! IsPieceInLegalSpot())
 			{
@@ -180,9 +244,9 @@ bool ACuboGrid::IsBlockHere(int Row, int Col)
 	return Grid.Find(Index) != nullptr;
 }
 
-bool ACuboGrid::IsBlockHere(FVector2D Pos)
+bool ACuboGrid::IsBlockHere(FCuboGridLocation Pos)
 {
-	return IsBlockHere( FMath::Floor(Pos.X) , FMath::Floor(Pos.Y) );
+	return IsBlockHere(Pos.X ,Pos.Y );
 }
 
 void ACuboGrid::SetBlock(int Row, int Col, ACuboBlock* Block)
@@ -202,11 +266,13 @@ void ACuboGrid::SetBlock(int Row, int Col, ACuboBlock* Block)
 	}
 
 	Grid.Add(Index, Block);
+	Block->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
+	Block->Unhighlight();
 }
 
-void ACuboGrid::SetBlock(FVector2D Pos, ACuboBlock* Block)
+void ACuboGrid::SetBlock(FCuboGridLocation Pos, ACuboBlock* Block)
 {
-	SetBlock( FMath::Floor(Pos.X) , FMath::Floor(Pos.Y), Block );
+	SetBlock(Pos.X , Pos.Y, Block );
 }
 
 void ACuboGrid::SetAccelerate(bool bAccelerate)

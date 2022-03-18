@@ -10,6 +10,11 @@
 
 class ACuboPiece;
 
+struct FCuboGridLocation
+{
+	int X, Y;
+};
+
 UCLASS()
 class CUBO_API ACuboGrid : public AActor
 {
@@ -30,6 +35,10 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Cubo")
 	int32 GridHeight=20;
+
+	// When enabled, will show lines out the occupied spaces in the grid, for editor debugging only
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Cubo")
+	bool bShowGridSpaces=false;
 
 protected:
 	// Called when the game starts or when spawned
@@ -55,15 +64,17 @@ protected:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	bool IsBlockHere(FVector2D Pos);
+	bool IsBlockHere(FCuboGridLocation Pos);
 	bool IsBlockHere(int Row, int Col);
 
-	void SetBlock(FVector2D Pos, ACuboBlock* Block);
+	void SetBlock(FCuboGridLocation Pos, ACuboBlock* Block);
 	void SetBlock(int Row, int Col, ACuboBlock* Block);
 
 	bool TryMovePieceDown();
 
 	bool IsPieceInLegalSpot();
+
+	FCuboGridLocation ConvertToGridSpace(FVector Location);
 
 public:
 	void SetAccelerate(bool bAccelerate);
