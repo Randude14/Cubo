@@ -74,6 +74,13 @@ void ACuboPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 	PlayerInputComponent->BindAxis("MovePieceLeftController", this, &ACuboPawn::MovePieceLeftController);
 	PlayerInputComponent->BindAxis("MovePieceRightController", this, &ACuboPawn::MovePieceRightController);
+
+	PlayerInputComponent->BindAction("MenuAction", EInputEvent::IE_Pressed, this, &ACuboPawn::MenuButtonPressed);
+}
+
+void ACuboPawn::MenuButtonPressed()
+{
+	
 }
 
 // Grab functions

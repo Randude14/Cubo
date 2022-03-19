@@ -8,6 +8,8 @@
 #include "GameFramework/Actor.h"
 #include "CuboGrid.generated.h"
 
+DECLARE_DYNAMIC_DELEGATE_TwoParams(FCuboGridScoreChanged, const class ACuboGrid*, Grid, const double&, Score);
+
 class ACuboPiece;
 
 struct FCuboGridLocation
@@ -60,6 +62,8 @@ protected:
 	UPROPERTY()
 	ACuboPiece* HighlighterPiece;
 
+	FCuboGridScoreChanged ScoreChanged;
+
 	bool bShouldAccelerate = false;
 	float PieceMoveTimer = 0.f;
 
@@ -88,4 +92,9 @@ public:
 	void SetAccelerate(bool bAccelerate);
 	void TryRotatePiece();
 	void TryMovePiece(bool bRight);
+
+	FCuboGridScoreChanged& GetScoreChanged()
+	{
+		return ScoreChanged;	
+	};
 };

@@ -66,6 +66,8 @@ protected:
 	void LeftRotatePiece();
 	void RightRotatePiece();
 
+	void MenuButtonPressed();
+
 	void MovePieceLeftController(float Axis);
 	void MovePieceRightController(float Axis);
 
