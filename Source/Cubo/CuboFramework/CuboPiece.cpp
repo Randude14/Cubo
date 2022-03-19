@@ -57,7 +57,7 @@ void ACuboPiece::Tick(float DeltaTime)
 void ACuboPiece::AddPieceOffset(FVector Offset)
 {
 	FVector PieceLocation = GetActorLocation() + Offset;
-	SetActorLocation(PieceLocation);	
+	SetActorLocation(PieceLocation);
 }
 
 float ACuboPiece::GetLeftOf(FVector Location)

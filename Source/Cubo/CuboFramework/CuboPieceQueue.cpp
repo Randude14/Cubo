@@ -95,9 +95,9 @@ void ACuboPieceQueue::SpawnPiece()
 			{
 				ACuboPiece* PieceBefore = CuboPieces.Last();
 				
-				float RelativeHeight = GetActorLocation().Z - PieceBefore->GetActorLocation().Z;
+				float RelativeHeight =  PieceBefore->GetActorLocation().Z - GetActorLocation().Z;
 				float LastPieceHeight = ((BlocksBetween+1) * PieceMoveInfo.BlockSpace) + RelativeHeight;
-				Cubo->SetActorRelativeLocation( FVector(0.f, 0.f, -LastPieceHeight) );
+				Cubo->SetActorRelativeLocation( FVector(0.f, 0.f, LastPieceHeight) );
 			}
 
 			CuboPieces.Add(Cubo);

@@ -58,13 +58,15 @@ void ACuboGrid::Tick(float DeltaTime)
 	if(CurrentPiece == nullptr)
 	{
 		CurrentPiece = PieceQueue->PopPiece();
-		CurrentPiece->AttachToActor(this, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+		CurrentPiece->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
 		float CheckLet = CurrentPiece->GetLeftOf(GetActorLocation());
 
 		if(! FMath::IsNearlyZero(CheckLet))
 		{
 			CurrentPiece->AddPieceOffset(FVector(0.f, -CheckLet, 0.f));
 		}
+
+		CurrentPiece->AddPieceOffset(FVector(0.f, 0.f, -PieceQueue->PieceMoveInfo.BlockSpace * 3));
 
 		UpdateHighlighter();
 	}
@@ -204,6 +206,11 @@ bool ACuboGrid::TryMovePieceDown(ACuboPiece* Piece, bool bSpawnBlocks)
 					FCuboGridLocation PieceGridLocation = ConvertToGridSpace(Relative);
 
 					SetBlock(PieceGridLocation, Block);
+
+					if(PieceGridLocation.Y < 0)
+					{
+						Block->SetColor(OutOfBoundsColor);
+					}
 				}
 
 				CheckFilledLines();
@@ -258,7 +265,9 @@ bool ACuboGrid::IsPieceInLegalSpot(ACuboPiece* Piece)
 
 FCuboGridLocation ACuboGrid::ConvertToGridSpace(FVector Location)
 {
-	Location.Z = FMath::Abs( Location.Z ) + PieceQueue->PieceMoveInfo.GetMoveDistance() / 2.f;
+	// invert the location's Z since the board goes down not up
+	// Also need to add some "leeway" on the end to account for floating round errors
+	Location.Z = (-Location.Z) + PieceQueue->PieceMoveInfo.GetMoveDistance() / 2.f;
 
 	float RawGridY = Location.Z / PieceQueue->PieceMoveInfo.BlockSpace;
 	FCuboGridLocation GridSpaceLocation;
@@ -302,7 +311,7 @@ void ACuboGrid::CheckFilledLines()
 
 	if(FilledLineIndexes.Num())
 	{
-		if(ScoreByLines.Num()-1 > FilledLineIndexes.Num())
+		if(ScoreByLines.Num() > FilledLineIndexes.Num()-1)
 		{
 			double Score = ScoreByLines[FilledLineIndexes.Num()-1];
 
