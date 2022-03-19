@@ -8,7 +8,7 @@
 #include "GameFramework/Actor.h"
 #include "CuboGrid.generated.h"
 
-DECLARE_DYNAMIC_DELEGATE_TwoParams(FCuboGridScoreChanged, const class ACuboGrid*, Grid, const int32&, Score);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCuboGridScoreChanged, const class ACuboGrid*, Grid, const int32&, ScoreAdded);
 
 class ACuboPiece;
 
@@ -48,6 +48,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Cubo")
 	TArray<int32> ScoreByLines;
 
+	UPROPERTY(BlueprintAssignable, Category="Cubo|Grid")
+	FCuboGridScoreChanged ScoreChanged;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -65,9 +68,8 @@ protected:
 	UPROPERTY()
 	ACuboPiece* HighlighterPiece;
 
-	FCuboGridScoreChanged ScoreChanged;
-
 	bool bShouldAccelerate = false;
+	bool bGamePaused = false;
 	float PieceMoveTimer = 0.f;
 	
 	int32 GridScore = 0.f;
@@ -84,7 +86,7 @@ protected:
 
 	void SetBlock(FCuboGridLocation Pos, ACuboBlock* Block);
 	void SetBlock(int Row, int Col, ACuboBlock* Block);
-
+	
 	bool TryMovePieceDown(ACuboPiece* Piece, bool bSpawnBlocks=true);
 
 	bool IsPieceInLegalSpot(ACuboPiece* Piece);
@@ -98,10 +100,29 @@ protected:
 public:
 	void SetAccelerate(bool bAccelerate);
 	void TryRotatePiece();
-	void TryMovePiece(bool bRight);
+	void TryMovePieceRL(bool bRight);
 
-	FCuboGridScoreChanged& GetScoreChanged()
+	UFUNCTION(BlueprintCallable, Category="Cubo")
+	void Pause()
 	{
-		return ScoreChanged;	
+		bGamePaused = true;
+	};
+
+	UFUNCTION(BlueprintCallable, Category="Cubo")
+	void Resume()
+	{
+		bGamePaused = false;
+	};
+
+	UFUNCTION(BlueprintCallable, Category="Cubo")
+	bool IsPaused() const
+	{
+		return bGamePaused;
+	}
+
+	UFUNCTION(BlueprintCallable, Category="Cubo")
+	int32 GetGridScore() const
+	{
+		return GridScore;
 	};
 };

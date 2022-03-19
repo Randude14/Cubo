@@ -186,7 +186,7 @@ void ACuboHandController::TryMovePieceLeft()
 {
 	if(Grid && IsControllerGrabbing() && MovingTimer <= 0.f)
 	{
-		Grid->TryMovePiece(false);
+		Grid->TryMovePieceRL(false);
 		MovingTimer = ControllerMoveInfo.MovePieceTime;            
 	}
 }
@@ -195,7 +195,7 @@ void ACuboHandController::TryMovePieceRight()
 {
 	if(Grid && IsControllerGrabbing() && MovingTimer <= 0.f)
 	{
-		Grid->TryMovePiece(true);
+		Grid->TryMovePieceRL(true);
 		MovingTimer = ControllerMoveInfo.MovePieceTime;
 	}
 }

@@ -29,6 +29,8 @@ void ACuboGrid::BeginPlay()
 	else
 	{
 		TinyPieceOffset = 1.f / PieceQueue->PieceMoveInfo.BlockSpace;
+		GridScore = 0;
+		ScoreChanged.Broadcast(this, 0);
 
 		HighlighterPiece = GetWorld()->SpawnActor<ACuboPiece>();
 		HighlighterPiece->AttachToActor(this, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
@@ -47,6 +49,11 @@ void ACuboGrid::BeginPlay()
 void ACuboGrid::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if(bGamePaused)
+	{
+		return;
+	}
 
 	if(CurrentPiece == nullptr)
 	{
@@ -150,7 +157,7 @@ void ACuboGrid::UpdateHighlighter()
 
 // Player controls
 
-void ACuboGrid::TryMovePiece(bool bRight)
+void ACuboGrid::TryMovePieceRL(bool bRight)
 {
 	if(CurrentPiece && PieceQueue)
 	{
@@ -295,21 +302,20 @@ void ACuboGrid::CheckFilledLines()
 
 	if(FilledLineIndexes.Num())
 	{
-		if(ScoreByLines.Num() > FilledLineIndexes.Num())
+		if(ScoreByLines.Num()-1 > FilledLineIndexes.Num())
 		{
-			double Score = ScoreByLines[FilledLineIndexes.Num()];
+			double Score = ScoreByLines[FilledLineIndexes.Num()-1];
 
 			GridScore += Score;
-			ScoreChanged.ExecuteIfBound(this, GridScore);
+
+			if(ScoreChanged.IsBound())
+			{
+				ScoreChanged.Broadcast(this, Score);
+			}
 		}
 		else
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Somehow filled more lines than what is possible? (%d)"), FilledLineIndexes.Num())
-		}
-
-		for(int i = 0; i < FilledLineIndexes.Num()-1; i++)
-		{
-			FilledLineIndexes[i] = FilledLineIndexes[i] + i + 1;
 		}
 
 		// start from the bottom
@@ -365,12 +371,22 @@ void ACuboGrid::CheckFilledLines()
 					}
 				}
 			}
+
+			// Need to offset lines above since the rows have been shifted down
+			for(int k = i-1; k >= 0; k--)
+			{
+				FilledLineIndexes[k] = FilledLineIndexes[k] + 1;
+			}
 		}
 	}
 }
 
 void ACuboGrid::TryRotatePiece()
 {
+	if(bGamePaused)
+	{
+		return;
+	}
 	if(CurrentPiece)
 	{
 		if(CurrentPiece->CanRotate())
