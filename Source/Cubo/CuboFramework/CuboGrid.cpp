@@ -42,6 +42,18 @@ void ACuboGrid::BeginPlay()
 		}
 
 		HighlighterPiece->Init(false);
+
+		RotateErrorPiece = GetWorld()->SpawnActor<ACuboPiece>();
+		RotateErrorPiece->AttachToActor(this, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+
+		for(int i = 0; i < 4; i++)
+		{
+			ACuboBlock* Block = GetWorld()->SpawnActor<ACuboBlock>(RotateErrorBlockClass);
+			Block->AttachToActor(RotateErrorPiece, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+		}
+
+		RotateErrorPiece->Init(false);
+		RotateErrorPiece->SetActorHiddenInGame(true);
 	}
 }
 
@@ -81,6 +93,15 @@ void ACuboGrid::Tick(float DeltaTime)
 		{
 			CurrentPiece = nullptr;
 		}
+	}
+
+	if(RotateErrorTimer < 0)
+	{
+		RotateErrorPiece->SetActorHiddenInGame(true);
+	}
+	else
+	{
+		RotateErrorTimer -= DeltaTime;
 	}
 
 	if(bShowGridSpaces)
@@ -435,6 +456,37 @@ void ACuboGrid::TryRotatePiece()
 
 			if(! IsPieceInLegalSpot(CurrentPiece))
 			{
+				if(RotateErrorPiece->IsHidden())
+				{
+					RotateErrorPiece->SetActorHiddenInGame(false);
+				}
+
+				RotateErrorTimer = RotateErrorVisibleTime;
+			
+				TArray<ACuboBlock*> Blocks;
+				CurrentPiece->GetBlocks(Blocks);
+
+				TArray<ACuboBlock*> RotateErrorBlocks;
+				RotateErrorPiece->GetBlocks(RotateErrorBlocks);
+
+				// match blocks of the current piece
+				for(int i = 0; i < RotateErrorBlocks.Num(); i++)
+				{
+					ACuboBlock* REBlock = RotateErrorBlocks[i];
+				
+					if(i < RotateErrorBlocks.Num())
+					{
+						ACuboBlock* Block = Blocks[i];
+						REBlock->SetActorHiddenInGame(false);
+						REBlock->SetActorScale3D(Block->GetActorScale());
+						REBlock->SetActorLocation(Block->GetActorLocation());
+					}
+					else
+					{
+						REBlock->SetActorHiddenInGame(true);
+					}
+				}
+				
 				// Move piece back if it is not in a legal spot
 				CurrentPiece->SetActorLocation(CurrentLoc);
 				CurrentPiece->SetRotate(CurrentRot);

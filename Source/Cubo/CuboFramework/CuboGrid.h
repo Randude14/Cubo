@@ -35,6 +35,9 @@ public:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<ACuboBlock> HighlightBlockClass;
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<ACuboBlock> RotateErrorBlockClass;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Cubo")
 	int32 GridWidth=10;
 
@@ -44,6 +47,10 @@ public:
 	// The color the cube blocks will have if the player has gone out of bounds at the top
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Cubo")
 	FLinearColor OutOfBoundsColor;
+
+	// The amount of time the rotate error piece should be visible
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Cubo")
+	float RotateErrorVisibleTime=0.5f;
 
 	// When enabled, will show lines out the occupied spaces in the grid, for editor debugging only
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Cubo")
@@ -72,9 +79,13 @@ protected:
 	UPROPERTY()
 	ACuboPiece* HighlighterPiece;
 
+	UPROPERTY()
+	ACuboPiece* RotateErrorPiece;
+
 	bool bShouldAccelerate = false;
 	bool bGamePaused = false;
 	float PieceMoveTimer = 0.f;
+	float RotateErrorTimer;
 	
 	int32 GridScore = 0.f;
 

@@ -195,3 +195,13 @@ void ACuboPiece::Unhighlight()
 		Block->Unhighlight();
 	}
 }
+
+void ACuboPiece::SetActorHiddenInGame(bool bNewHidden)
+{
+	Super::SetActorHiddenInGame(bNewHidden);
+
+	for(ACuboBlock* Block : Blocks)
+	{
+		Block->SetActorHiddenInGame(bNewHidden);
+	}
+}

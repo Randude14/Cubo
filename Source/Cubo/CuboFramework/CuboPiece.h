@@ -58,4 +58,6 @@ public:
 	void GetBlocks(TArray<ACuboBlock*>&);
 
 	void AddPieceOffset(FVector Offset);
+
+	void SetActorHiddenInGame(bool bNewHidden) override;
 };
