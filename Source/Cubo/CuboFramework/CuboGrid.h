@@ -8,7 +8,7 @@
 #include "GameFramework/Actor.h"
 #include "CuboGrid.generated.h"
 
-DECLARE_DYNAMIC_DELEGATE_TwoParams(FCuboGridScoreChanged, const class ACuboGrid*, Grid, const double&, Score);
+DECLARE_DYNAMIC_DELEGATE_TwoParams(FCuboGridScoreChanged, const class ACuboGrid*, Grid, const int32&, Score);
 
 class ACuboPiece;
 
@@ -45,6 +45,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Cubo")
 	bool bShowGridSpaces=false;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Cubo")
+	TArray<int32> ScoreByLines;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -66,6 +69,8 @@ protected:
 
 	bool bShouldAccelerate = false;
 	float PieceMoveTimer = 0.f;
+	
+	int32 GridScore = 0.f;
 
 	// used when determine legal spots for the cubo pieces
 	// helps account for rounding errors when dealing with floats in grid spaces
@@ -87,6 +92,8 @@ protected:
 	FCuboGridLocation ConvertToGridSpace(FVector Location);
 
 	void UpdateHighlighter();
+	
+	void CheckFilledLines();
 
 public:
 	void SetAccelerate(bool bAccelerate);

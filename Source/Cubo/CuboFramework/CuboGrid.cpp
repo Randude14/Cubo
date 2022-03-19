@@ -81,18 +81,16 @@ void ACuboGrid::Tick(float DeltaTime)
 
 		for(int Index : Keys)
 		{
-			// int Index = GridHeight * Row + Col;
+			// int Index = GridWidth * Col + Row;
 
-			int i = Index;
-			int r = 0;
-			while(i > GridHeight) {r++; i-= GridHeight;}
-			int c = Index - r * GridHeight;
-
+			int r = Index % GridWidth;
+			int c = Index / GridWidth;
+			
 			FVector GridLocation = GetActorLocation();
 			FVector IndexLocation = FVector(0.f, r * PieceQueue->PieceMoveInfo.BlockSpace, - c * PieceQueue->PieceMoveInfo.BlockSpace) + GridLocation;
 			FVector IndexOutLocation = IndexLocation + FVector(-200.f, 0.f, 0.f);
 
-			DrawDebugLine(GetWorld(), IndexLocation, IndexOutLocation, FColor::Red, true, -1, 0, 5.f);
+			DrawDebugLine(GetWorld(), IndexLocation, IndexOutLocation, FColor::Red, false, -1, 0, 5.f);
 		}
 	}
 }
@@ -201,6 +199,8 @@ bool ACuboGrid::TryMovePieceDown(ACuboPiece* Piece, bool bSpawnBlocks)
 					SetBlock(PieceGridLocation, Block);
 				}
 
+				CheckFilledLines();
+
 				Piece->Destroy();
 			}
 			return false;
@@ -268,6 +268,107 @@ FCuboGridLocation ACuboGrid::ConvertToGridSpace(FVector Location)
 	return GridSpaceLocation;
 }
 
+void ACuboGrid::CheckFilledLines()
+{
+	TArray<int> FilledLineIndexes;
+	
+	for(int i = 0; i < GridHeight; i++)
+	{
+		bool bFilled = true;
+		
+		for(int j = 0; j < GridWidth; j++)
+		{
+			int Index = GridWidth * i + j;
+			
+			if(! Grid.Contains(Index))
+			{
+				bFilled = false;
+				break;
+			}
+		}
+
+		if(bFilled)
+		{
+			FilledLineIndexes.Add(i);
+		}
+	}
+
+	if(FilledLineIndexes.Num())
+	{
+		if(ScoreByLines.Num() > FilledLineIndexes.Num())
+		{
+			double Score = ScoreByLines[FilledLineIndexes.Num()];
+
+			GridScore += Score;
+			ScoreChanged.ExecuteIfBound(this, GridScore);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Somehow filled more lines than what is possible? (%d)"), FilledLineIndexes.Num())
+		}
+
+		for(int i = 0; i < FilledLineIndexes.Num()-1; i++)
+		{
+			FilledLineIndexes[i] = FilledLineIndexes[i] + i + 1;
+		}
+
+		// start from the bottom
+		for(int i = FilledLineIndexes.Num()-1; i >= 0 ; i--)
+		{
+			int Col = FilledLineIndexes[i];
+
+			// delete row
+			for(int Row = 0; Row < GridWidth; Row++)
+			{
+				int Index = GridWidth * Col + Row;
+				if(Index)
+				{
+					ACuboBlock* Block = Grid[Index];
+					if(Block)
+					{
+						Block->Destroy();
+					}
+					Grid.Remove(Index);
+				}
+				else
+				{
+					UE_LOG(LogTemp, Warning, TEXT("Invalid index detected while trying to clear lines (%d)"), Index)
+				}
+			}
+			
+			// Move up one row
+			TArray<int> GridKeys;
+			Grid.GetKeys(GridKeys);
+			GridKeys.Sort();
+
+			int Cutoff = GridWidth * Col;
+			
+			for(int j = GridKeys.Num()-1; j >= 0; j--)
+			{
+				int Index = GridKeys[j];
+				
+				// Don't care about blocks that are below the row we just deleted
+				if(Index < Cutoff)
+				{
+					if(Grid.Contains(Index))
+					{
+						ACuboBlock* Block = Grid[Index];
+						Grid.Add(Index+GridWidth, Block);
+						FVector BlockLocation = FVector(0.f, 0.f, -PieceQueue->PieceMoveInfo.BlockSpace);
+						Block->SetActorLocation( Block->GetActorLocation() + BlockLocation );
+
+						Grid.Remove(Index);
+					}
+					else
+					{
+						UE_LOG(LogTemp, Warning, TEXT("Invalid index detected while trying to move lines (%d)"), Index)
+					}
+				}
+			}
+		}
+	}
+}
+
 void ACuboGrid::TryRotatePiece()
 {
 	if(CurrentPiece)
@@ -323,7 +424,7 @@ void ACuboGrid::TryRotatePiece()
 
 bool ACuboGrid::IsBlockHere(int Row, int Col)
 {
-	int Index = GridHeight * Row + Col;
+	int Index = GridWidth * Col + Row;
 	return Grid.Find(Index) != nullptr;
 }
 
@@ -334,7 +435,7 @@ bool ACuboGrid::IsBlockHere(FCuboGridLocation Pos)
 
 void ACuboGrid::SetBlock(int Row, int Col, ACuboBlock* Block)
 {
-	int Index = GridHeight * Row + Col;
+	int Index = GridWidth * Col + Row;
 
 	if(Index > GridWidth * GridHeight)
 	{
@@ -345,6 +446,12 @@ void ACuboGrid::SetBlock(int Row, int Col, ACuboBlock* Block)
 	if(Grid.Contains(Index))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("There is already a block at (%d, %d) for Grid %s"), Row, Col, *GetName())
+		return;
+	}
+
+	if(Block == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Block somehow null at (%d, %d) for Grid %s"), Row, Col, *GetName())
 		return;
 	}
 
