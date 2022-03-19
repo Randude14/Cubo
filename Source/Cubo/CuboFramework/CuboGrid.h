@@ -44,6 +44,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Cubo")
 	int32 GridHeight=20;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Cubo")
+	int32 HighlighterSpacing=20;
+
 	// The color the cube blocks will have if the player has gone out of bounds at the top
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Cubo")
 	FLinearColor OutOfBoundsColor;

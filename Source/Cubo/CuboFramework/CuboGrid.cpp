@@ -93,6 +93,7 @@ void ACuboGrid::Tick(float DeltaTime)
 		{
 			CurrentPiece = nullptr;
 		}
+		UpdateHighlighter();
 	}
 
 	if(RotateErrorTimer < 0)
@@ -131,17 +132,13 @@ void ACuboGrid::UpdateHighlighter()
 	{
 		if(CurrentPiece)
 		{
-			if(HighlighterPiece->IsHidden())
-			{
-				HighlighterPiece->SetActorHiddenInGame(false);
-			}
-			
-			HighlighterPiece->SetActorHiddenInGame(false);
 			TArray<ACuboBlock*> Blocks;
 			CurrentPiece->GetBlocks(Blocks);
 
 			TArray<ACuboBlock*> HighlightingBlocks;
 			HighlighterPiece->GetBlocks(HighlightingBlocks);
+
+			HighlighterPiece->SetActorLocation(CurrentPiece->GetActorLocation());
 
 			// match blocks of the current piece
 			for(int i = 0; i < HighlightingBlocks.Num(); i++)
@@ -168,8 +165,22 @@ void ACuboGrid::UpdateHighlighter()
 			{
 				Location = HighlighterPiece->GetActorLocation();
 			}
-			
-			HighlighterPiece->SetActorLocation(Location);
+
+			float HDistance = FMath::Abs( HighlighterPiece->GetActorLocation().Z - CurrentPiece->GetActorLocation().Z );
+
+			if(HDistance < HighlighterSpacing)
+			{
+				HighlighterPiece->SetActorHiddenInGame(true);
+			}
+			else
+			{
+				HighlighterPiece->SetActorLocation(Location);
+
+				if(HighlighterPiece->IsHidden())
+				{
+					HighlighterPiece->SetActorHiddenInGame(false);
+				}
+			}
 		}
 		else if(! HighlighterPiece->IsHidden())
 		{
