@@ -68,6 +68,8 @@ protected:
 
 	void MenuButtonPressed();
 
+	void ControllerTipSummon();
+
 	void MovePieceLeftController(float Axis);
 	void MovePieceRightController(float Axis);
 

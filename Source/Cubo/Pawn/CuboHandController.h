@@ -31,19 +31,22 @@ public:
 	// Sets default values for this actor's properties
 	ACuboHandController();
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(VisibleAnywhere)
 	USceneComponent* ControllerRoot;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(VisibleAnywhere)
+	USceneComponent* ControlsDisplay;
+
+	UPROPERTY(VisibleAnywhere)
 	USplineComponent* LaserSpline;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(VisibleAnywhere)
 	UWidgetInteractionComponent* LaserDirection;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(VisibleAnywhere)
 	USplineMeshComponent* LaserBeam;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category="Cubo")
 	FControllerMoveInfo ControllerMoveInfo;
 
 	UPROPERTY(EditAnywhere, Category="Cubo")

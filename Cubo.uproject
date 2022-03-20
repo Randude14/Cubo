@@ -13,6 +13,12 @@
 			]
 		}
 	],
+	"Plugins": [
+		{
+			"Name": "Water",
+			"Enabled": true
+		}
+	],
 	"TargetPlatforms": [
 		"Android",
 		"WindowsNoEditor"

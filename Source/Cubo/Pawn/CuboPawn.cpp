@@ -42,6 +42,9 @@ void ACuboPawn::BeginPlay()
 		
 		RightController->OtherController = LeftController;
 		LeftController->OtherController = RightController;
+
+		RightController->ControlsDisplay->SetVisibility(false, true);
+		LeftController->ControlsDisplay->SetVisibility(false, true);
 	}
 
 	if(! UHeadMountedDisplayFunctionLibrary::IsHeadMountedDisplayConnected())
@@ -76,11 +79,24 @@ void ACuboPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAxis("MovePieceRightController", this, &ACuboPawn::MovePieceRightController);
 
 	PlayerInputComponent->BindAction("MenuAction", EInputEvent::IE_Pressed, this, &ACuboPawn::MenuButtonPressed);
+	PlayerInputComponent->BindAction("ControllerTipSummon", EInputEvent::IE_Pressed, this, &ACuboPawn::ControllerTipSummon);
 }
 
 void ACuboPawn::MenuButtonPressed()
 {
 	
+}
+
+void ACuboPawn::ControllerTipSummon()
+{
+	if(LeftController)
+	{
+		LeftController->ControlsDisplay->SetVisibility( ! LeftController->ControlsDisplay->IsVisible(), true );
+	}
+	if(RightController)
+	{
+		RightController->ControlsDisplay->SetVisibility( ! RightController->ControlsDisplay->IsVisible(), true );
+	}
 }
 
 // Grab functions

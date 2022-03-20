@@ -16,6 +16,9 @@ ACuboHandController::ACuboHandController()
 	ControllerRoot = CreateDefaultSubobject<USceneComponent>("ControllerRoot");
 	SetRootComponent(ControllerRoot);
 
+	ControlsDisplay = CreateDefaultSubobject<USceneComponent>("ControlsDisplay");
+	ControlsDisplay->SetupAttachment(ControllerRoot);
+
 	LaserDirection = CreateDefaultSubobject<UWidgetInteractionComponent>("LaserDirection");
 	LaserDirection->SetMobility(EComponentMobility::Movable);
 	LaserDirection->SetupAttachment(ControllerRoot);
