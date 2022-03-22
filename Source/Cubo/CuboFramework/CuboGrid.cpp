@@ -30,7 +30,7 @@ void ACuboGrid::BeginPlay()
 	{
 		TinyPieceOffset = 1.f / PieceQueue->PieceMoveInfo.BlockSpace;
 		GridScore = 0;
-		ScoreChanged.Broadcast(this, 0);
+		ScoreChanged.Broadcast(this, GridScore, 0);
 
 		HighlighterPiece = GetWorld()->SpawnActor<ACuboPiece>();
 		HighlighterPiece->AttachToActor(this, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
@@ -41,7 +41,7 @@ void ACuboGrid::BeginPlay()
 			Block->AttachToActor(HighlighterPiece, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 		}
 
-		HighlighterPiece->Init(false);
+		HighlighterPiece->Init(false, 0.f, 0.f);
 
 		RotateErrorPiece = GetWorld()->SpawnActor<ACuboPiece>();
 		RotateErrorPiece->AttachToActor(this, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
@@ -52,7 +52,7 @@ void ACuboGrid::BeginPlay()
 			Block->AttachToActor(RotateErrorPiece, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 		}
 
-		RotateErrorPiece->Init(false);
+		RotateErrorPiece->Init(false, 0.f, 0.f);
 		RotateErrorPiece->SetActorHiddenInGame(true);
 	}
 }
@@ -85,13 +85,15 @@ void ACuboGrid::Tick(float DeltaTime)
 
 	PieceMoveTimer -= DeltaTime;
 
-	if(PieceMoveTimer < 0)
+	if(CurrentPiece && CurrentPiece->MoveTimerUp())
 	{
-		PieceMoveTimer += (bShouldAccelerate) ? PieceQueue->PieceMoveInfo.AccelerateTime : PieceQueue->PieceMoveInfo.NormalTime;
-		
 		if(! TryMovePieceDown(CurrentPiece))
 		{
 			CurrentPiece = nullptr;
+		}
+		else
+		{
+			CurrentPiece->ResetMoveTimer();
 		}
 		UpdateHighlighter();
 	}
@@ -191,26 +193,40 @@ void ACuboGrid::UpdateHighlighter()
 
 // Player controls
 
-void ACuboGrid::TryMovePieceRL(bool bRight)
+bool ACuboGrid::TryMovePieceRL(ACuboPiece* Piece, bool bRight)
 {
-	if(CurrentPiece && PieceQueue)
+	if(Piece && PieceQueue)
 	{
 		float MoveDistance = (bRight) ? PieceQueue->PieceMoveInfo.BlockSpace : -PieceQueue->PieceMoveInfo.BlockSpace;
 
-		FVector CurrentLoc = CurrentPiece->GetActorLocation();
-		CurrentPiece->AddPieceOffset(FVector(0.f, MoveDistance, 0.f));
+		FVector CurrentLoc = Piece->GetActorLocation();
+		Piece->AddPieceOffset(FVector(0.f, MoveDistance, 0.f));
 
-		if(! IsPieceInLegalSpot(CurrentPiece))
+		if(! IsPieceInLegalSpot(Piece))
 		{
 			// Move piece back if it's not legal
-			CurrentPiece->SetActorLocation(CurrentLoc);
+			Piece->SetActorLocation(CurrentLoc);
+			return false;
 		}
 		else
 		{
 			UpdateHighlighter();
+			return true;
 		}
 	}
+
+	return false;
 }
+
+FCuboGridLocation ACuboGrid::LinePlaneIntersect(ACuboPiece* Piece, FVector Forward, FVector DragPointer)
+{
+	FVector DragForward = Forward + DragPointer * 3000.f;
+	FVector GridForward = -GetActorForwardVector();
+	FVector GridLocation = FMath::LinePlaneIntersection(Forward, DragForward, GetActorLocation(), GridForward);
+	FVector RelativeGridLocation = GridLocation - GetActorLocation();
+	return ConvertToGridSpace(RelativeGridLocation);
+}
+
 
 bool ACuboGrid::TryMovePieceDown(ACuboPiece* Piece, bool bSpawnBlocks)
 {
@@ -351,7 +367,7 @@ void ACuboGrid::CheckFilledLines()
 
 			if(ScoreChanged.IsBound())
 			{
-				ScoreChanged.Broadcast(this, Score);
+				ScoreChanged.Broadcast(this, GridScore, Score);
 			}
 		}
 		else
@@ -422,29 +438,29 @@ void ACuboGrid::CheckFilledLines()
 	}
 }
 
-void ACuboGrid::TryRotatePiece()
+bool ACuboGrid::TryRotatePiece(ACuboPiece* Piece)
 {
 	if(bGamePaused)
 	{
-		return;
+		return false;
 	}
-	if(CurrentPiece)
+	if(Piece)
 	{
-		if(CurrentPiece->CanRotate())
+		if(Piece->CanRotate())
 		{
-			int CurrentRot = CurrentPiece->GetRotate();
+			int CurrentRot = Piece->GetRotate();
 			int Rotate = CurrentRot + 1;
-			FVector CurrentLoc = CurrentPiece->GetActorLocation();
+			FVector CurrentLoc = Piece->GetActorLocation();
 
 			if(Rotate == 4)
 			{
 				Rotate = 0;
 			}
-			CurrentPiece->SetRotate(Rotate);
+			Piece->SetRotate(Rotate);
 
 			FVector RightBorder = GetActorLocation() + FVector(0.f, (PieceQueue->PieceMoveInfo.BlockSpace) * (GridWidth-1), 0.f);
-			float CheckRight = CurrentPiece->GetRightOf(RightBorder);
-			float CheckLeft = CurrentPiece->GetLeftOf(GetActorLocation());
+			float CheckRight = Piece->GetRightOf(RightBorder);
+			float CheckLeft = Piece->GetLeftOf(GetActorLocation());
 		
 			bool bIsRight = ! FMath::IsNearlyZero(CheckRight);
 			bool bIsLeft = ! FMath::IsNearlyZero(CheckLeft);
@@ -455,17 +471,17 @@ void ACuboGrid::TryRotatePiece()
 			}
 			else if(bIsRight)
 			{
-				CurrentPiece->AddPieceOffset(FVector(0.f, -CheckRight, 0.f));
+				Piece->AddPieceOffset(FVector(0.f, -CheckRight, 0.f));
 				
 			}
 			else if(bIsLeft)
 			{
-				CurrentPiece->AddPieceOffset(FVector(0.f, -CheckLeft, 0.f));
+				Piece->AddPieceOffset(FVector(0.f, -CheckLeft, 0.f));
 			}
 
-			CurrentLoc = CurrentPiece->GetActorLocation();
+			CurrentLoc = Piece->GetActorLocation();
 
-			if(! IsPieceInLegalSpot(CurrentPiece))
+			if(! IsPieceInLegalSpot(Piece))
 			{
 				if(RotateErrorPiece->IsHidden())
 				{
@@ -475,7 +491,7 @@ void ACuboGrid::TryRotatePiece()
 				RotateErrorTimer = RotateErrorVisibleTime;
 			
 				TArray<ACuboBlock*> Blocks;
-				CurrentPiece->GetBlocks(Blocks);
+				Piece->GetBlocks(Blocks);
 
 				TArray<ACuboBlock*> RotateErrorBlocks;
 				RotateErrorPiece->GetBlocks(RotateErrorBlocks);
@@ -499,15 +515,15 @@ void ACuboGrid::TryRotatePiece()
 				}
 				
 				// Move piece back if it is not in a legal spot
-				CurrentPiece->SetActorLocation(CurrentLoc);
-				CurrentPiece->SetRotate(CurrentRot);
+				Piece->SetActorLocation(CurrentLoc);
+				Piece->SetRotate(CurrentRot);
+				return false;
 			}
-			else
-			{
-				UpdateHighlighter();
-			}
+			UpdateHighlighter();
+			return true;
 		}
 	}
+	return false;
 }
 
 bool ACuboGrid::IsBlockHere(int Row, int Col)
@@ -552,16 +568,5 @@ void ACuboGrid::SetBlock(FCuboGridLocation Pos, ACuboBlock* Block)
 {
 	SetBlock(Pos.X , Pos.Y, Block );
 }
-
-void ACuboGrid::SetAccelerate(bool bAccelerate)
-{
-	bShouldAccelerate = bAccelerate;
-
-	if(bAccelerate)
-	{
-		PieceMoveTimer -= PieceQueue->PieceMoveInfo.NormalTime - PieceQueue->PieceMoveInfo.AccelerateTime;
-	}
-}
-
 
 

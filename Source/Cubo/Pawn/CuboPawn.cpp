@@ -138,6 +138,7 @@ void ACuboPawn::LeftAcceleratePressed()
 	if(LeftController)
 	{
 		LeftController->AcceleratePressed();
+		LeftController->LaserDirection->PressKey(EKeys::LeftMouseButton);
 	}
 }
 
@@ -154,6 +155,7 @@ void ACuboPawn::LeftAccelerateReleased()
 	if(LeftController)
 	{
 		LeftController->AccelerateReleased();
+		LeftController->LaserDirection->ReleaseKey(EKeys::LeftMouseButton);
 	}
 }
 

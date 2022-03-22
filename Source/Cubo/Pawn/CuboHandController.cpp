@@ -2,6 +2,8 @@
 
 
 #include "CuboHandController.h"
+
+#include "DrawDebugHelpers.h"
 #include "HeadMountedDisplayFunctionLibrary.h"
 #include "Components/WidgetInteractionComponent.h"
 #include "Cubo/CuboFramework/CuboPiece.h"
@@ -51,7 +53,7 @@ void ACuboHandController::BeginPlay()
 
 	if(UseKbm)
 	{
-		LaserBeam->SetVisibility(false);
+		//LaserBeam->SetVisibility(false);
 	}
 }
 
@@ -67,9 +69,22 @@ void ACuboHandController::Tick(float DeltaTime)
 	
 	UpdateLaserBeam();
 	
-	if(MovingTimer > 0)
+	if(bUseMotion && MovingTimer > 0)
 	{
 		MovingTimer -= DeltaTime;
+	}
+
+	if(bUseMotion && CuboPiece && CuboPiece->IsBeingGrabbed() && Grid)
+	{
+		FCuboGridLocation CurrentDragged = Grid->LinePlaneIntersect(CuboPiece, LaserBeam->GetComponentLocation(), LaserBeam->GetForwardVector());
+
+		if(DraggedLocation.X != CurrentDragged.X)
+		{
+			int Delta = DraggedLocation.X - CurrentDragged.X;
+
+			Grid->TryMovePieceRL(CuboPiece, (Delta < 0) ? true : false );
+			DraggedLocation = CurrentDragged;
+		}
 	}
 }
 
@@ -93,13 +108,6 @@ void ACuboHandController::UpdateLaserBeam()
 	
 	SelectedActor = ObjectHitResult.GetActor();
 
-	// Don't interfere with other controllers actors
-	if(OtherController->SelectedActor && OtherController->SelectedActor->GetAttachParentActor() == this->SelectedActor)
-	{
-		SelectedActor = nullptr;
-		return;
-	}
-
 	FVector HitLocation = bHitObject ? ObjectHitResult.Location : LaserForward;
 	LaserSpline->SetLocationAtSplinePoint(0, LaserLocation, ESplineCoordinateSpace::World);
 	LaserSpline->SetTangentAtSplinePoint(0, FVector::ZeroVector, ESplineCoordinateSpace::World);
@@ -113,16 +121,23 @@ void ACuboHandController::UpdateLaserBeam()
 	
 	LaserBeam->SetStartAndEnd(LaserPointStart, LaserPointTanStart, LaserPointEnd, LaserPointTanEnd, true);
 
-	if(SelectedActor != CuboPiece)
+	ACuboPiece* SelectedPiece = nullptr;
+	
+	if(SelectedActor && SelectedActor->GetAttachParentActor())
 	{
-		if(CuboPiece)
+		SelectedPiece = Cast<ACuboPiece>(SelectedActor->GetAttachParentActor());
+	}
+	
+	if(SelectedPiece != CuboPiece)
+	{
+		if(CuboPiece && (! OtherController || OtherController->CuboPiece != CuboPiece) )
 		{
 			CuboPiece->Unhighlight();
 		}
 
 		if(SelectedActor)
 		{
-			CuboPiece = Cast<ACuboPiece>(SelectedActor->GetAttachParentActor());
+			CuboPiece = SelectedPiece;
 
 			if(CuboPiece)
 			{
@@ -144,6 +159,16 @@ void ACuboHandController::GrabPressed()
 	{
 		LaserBeam->SetVisibility(false);
 	}
+
+	if(CuboPiece && ! CuboPiece->IsBeingGrabbed())
+	{
+		CuboPiece->GrabPiece(this);
+		
+		if(Grid)
+		{
+			DraggedLocation = Grid->LinePlaneIntersect(CuboPiece, LaserBeam->GetComponentLocation(), LaserBeam->GetForwardVector());
+		}
+	}
 }
 
 void ACuboHandController::GrabReleased()
@@ -154,21 +179,26 @@ void ACuboHandController::GrabReleased()
 	{
 		LaserBeam->SetVisibility(true);
 	}
+
+	if(CuboPiece)
+	{
+		CuboPiece->ReleasePiece(this);
+	}
 }
 
 void ACuboHandController::AcceleratePressed()
 {
-	if(Grid)
+	if(CuboPiece)
 	{
-		Grid->SetAccelerate(true);
+		CuboPiece->SetAccelerate(true);
 	}
 }
 
 void ACuboHandController::AccelerateReleased()
 {
-	if(Grid)
+	if(CuboPiece)
 	{
-		Grid->SetAccelerate(false);
+		CuboPiece->SetAccelerate(false);
 	}
 }
 
@@ -176,7 +206,7 @@ void ACuboHandController::TryRotatePiece()
 {
 	if(Grid)
 	{
-		Grid->TryRotatePiece();
+		Grid->TryRotatePiece(CuboPiece);
 	}
 }
 
@@ -187,18 +217,18 @@ void ACuboHandController::MovePieceStopped()
 
 void ACuboHandController::TryMovePieceLeft()
 {
-	if(Grid && IsControllerGrabbing() && MovingTimer <= 0.f)
+	if(!bUseMotion && Grid && CuboPiece && IsControllerGrabbing() && MovingTimer <= 0.f)
 	{
-		Grid->TryMovePieceRL(false);
+		Grid->TryMovePieceRL(CuboPiece, false);
 		MovingTimer = ControllerMoveInfo.MovePieceTime;            
 	}
 }
 
 void ACuboHandController::TryMovePieceRight()
 {
-	if(Grid && IsControllerGrabbing() && MovingTimer <= 0.f)
+	if(!bUseMotion && Grid && CuboPiece && IsControllerGrabbing() && MovingTimer <= 0.f)
 	{
-		Grid->TryMovePieceRL(true);
+		Grid->TryMovePieceRL(CuboPiece, true);
 		MovingTimer = ControllerMoveInfo.MovePieceTime;
 	}
 }

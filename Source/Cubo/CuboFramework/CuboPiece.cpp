@@ -1,12 +1,9 @@
 ﻿
 #include "CuboPiece.h"
-#include "DrawDebugHelpers.h"
 
-
-// Sets default values
 ACuboPiece::ACuboPiece()
 {
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 
 	RootSceneComponent = CreateDefaultSubobject<USceneComponent>("RootSceneComponent");
 	SetRootComponent(RootSceneComponent);
@@ -15,9 +12,11 @@ ACuboPiece::ACuboPiece()
 	AnchorComponent->SetupAttachment(RootSceneComponent);
 }
 
-void ACuboPiece::Init(bool bShouldRotate)
+void ACuboPiece::Init(bool bShouldRotate, float NTime, float ATime)
 {
 	this->bRotateEnabled = bShouldRotate;
+	this->NormalTime = NTime;
+	this->AccelerateTime = ATime;
 
 	AnchorComponent->SetVisibility(bShouldRotate);
 	
@@ -35,23 +34,30 @@ void ACuboPiece::Init(bool bShouldRotate)
 	if(Blocks.Num() == 0)
 	{
 		UE_LOG(LogTemp, Error, TEXT("%s spawned with zero blocks. How did this happen?"), *GetName())
+		SetActorTickEnabled(false);
 	}
 	else
 	{
 		bInit = true;
+		SetActorTickEnabled(true);
 	}
 }
 
-// Called when the game starts or when spawned
 void ACuboPiece::BeginPlay()
 {
 	Super::BeginPlay();
 }
 
-// Called every frame
 void ACuboPiece::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	MoveTimer -= DeltaTime;
+}
+
+void ACuboPiece::ResetMoveTimer()
+{
+	MoveTimer = (bAccelerating) ? AccelerateTime : NormalTime;
 }
 
 void ACuboPiece::AddPieceOffset(FVector Offset)
@@ -180,6 +186,28 @@ void ACuboPiece::SetRotate(int Rot)
 	SetActorRelativeRotation(Rotation);
 }
 
+void ACuboPiece::GrabPiece(AActor* Gripping)
+{
+	if(GrippingCurrently == nullptr)
+	{
+		GrippingCurrently = Gripping;
+	}
+}
+
+void ACuboPiece::ReleasePiece(AActor* Gripping)
+{
+	// if they don't match just ignore
+	if(GrippingCurrently == Gripping)
+	{
+		GrippingCurrently = nullptr;
+	}
+}
+
+bool ACuboPiece::IsBeingGrabbed() const
+{
+	return GrippingCurrently != nullptr;
+}
+
 void ACuboPiece::Highlight()
 {
 	for(ACuboBlock* Block : Blocks)
@@ -205,3 +233,15 @@ void ACuboPiece::SetActorHiddenInGame(bool bNewHidden)
 		Block->SetActorHiddenInGame(bNewHidden);
 	}
 }
+
+void ACuboPiece::SetAccelerate(bool bAccelerate)
+{
+	bAccelerating = bAccelerate;
+
+	// if we're accelerating get the time difference
+	if(bAccelerate)
+	{
+		MoveTimer -= NormalTime - AccelerateTime;
+	}
+}
+

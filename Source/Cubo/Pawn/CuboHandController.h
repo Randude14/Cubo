@@ -49,8 +49,12 @@ public:
 	UPROPERTY(EditAnywhere, Category="Cubo")
 	FControllerMoveInfo ControllerMoveInfo;
 
+	// How far the laser pointer should trace from the controller in world units
 	UPROPERTY(EditAnywhere, Category="Cubo")
 	float MaxLaserDistance;
+
+	UPROPERTY(EditAnywhere, Category="Cubo")
+	bool bUseMotion=true;
 
 	UPROPERTY()
 	ACuboHandController* OtherController;
@@ -77,6 +81,8 @@ protected:
 
 	UPROPERTY()
 	ACuboGrid* Grid;
+
+	FCuboGridLocation DraggedLocation;
 
 public:
 	// Called every frame

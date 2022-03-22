@@ -103,7 +103,7 @@ void ACuboPieceQueue::SpawnPiece()
 			CuboPieces.Add(Cubo);
 			float CheckLeft = Cubo->GetLeftOf(GetActorLocation());
 			Cubo->AddPieceOffset(FVector(0.f, CheckLeft, 0.f));
-			Cubo->Init(bPieceShouldRotate);
+			Cubo->Init(bPieceShouldRotate, PieceMoveInfo.NormalTime, PieceMoveInfo.AccelerateTime);
 		}
 	}
 }

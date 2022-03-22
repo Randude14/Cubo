@@ -8,7 +8,7 @@
 #include "GameFramework/Actor.h"
 #include "CuboGrid.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCuboGridScoreChanged, const class ACuboGrid*, Grid, const int32&, ScoreAdded);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FCuboGridScoreChanged, const class ACuboGrid*, Grid, const int32&, TotalScore, const int32&, ScoreAdded);
 
 class ACuboPiece;
 
@@ -84,8 +84,7 @@ protected:
 
 	UPROPERTY()
 	ACuboPiece* RotateErrorPiece;
-
-	bool bShouldAccelerate = false;
+	
 	bool bGamePaused = false;
 	float PieceMoveTimer = 0.f;
 	float RotateErrorTimer;
@@ -109,16 +108,18 @@ protected:
 
 	bool IsPieceInLegalSpot(ACuboPiece* Piece);
 
-	FCuboGridLocation ConvertToGridSpace(FVector Location);
-
 	void UpdateHighlighter();
 	
 	void CheckFilledLines();
 
 public:
-	void SetAccelerate(bool bAccelerate);
-	void TryRotatePiece();
-	void TryMovePieceRL(bool bRight);
+	bool TryRotatePiece(ACuboPiece* Piece);
+	bool TryMovePieceRL(ACuboPiece* Piece, bool bRight);
+	// Attempt to "drag" the piece along the grid using it as a plane for intersection
+	FCuboGridLocation LinePlaneIntersect(ACuboPiece* Piece, FVector Forward, FVector DragPointer);
+	float GetBlockSpacing() { if(PieceQueue){ return PieceQueue->PieceMoveInfo.BlockSpace; } return 0.f;  };
+	
+	FCuboGridLocation ConvertToGridSpace(FVector Location);
 
 	UFUNCTION(BlueprintCallable, Category="Cubo")
 	void Pause()
