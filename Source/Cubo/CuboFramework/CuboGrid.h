@@ -49,7 +49,11 @@ public:
 
 	// The color the cube blocks will have if the player has gone out of bounds at the top
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Cubo")
-	FLinearColor OutOfBoundsColor;
+	UMaterialInstance* OutOfBoundsMaterial;
+
+	// The material of the highlight blocks at the bottom
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Cubo")
+	UMaterialInstance* HighlightMaterial;
 
 	// The amount of time the rotate error piece should be visible
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Cubo")

@@ -24,7 +24,11 @@ struct FCuboPieceInfo
 
 	// Color of this piece when it is spawned
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Cubo")
-	FLinearColor CubeColor;
+	UMaterialInstance* DefaultMaterial;
+
+	// Color of this piece when it is spawned
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Cubo")
+	UMaterialInstance* HighlightMaterial;
 	
 };
 

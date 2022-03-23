@@ -52,7 +52,8 @@ void ACuboPieceQueue::SpawnPiece()
 					if(ACuboBlock* CuboBlock = Cast<ACuboBlock>( GetWorld()->SpawnActor(CuboBlockClass) ))
 					{
 						CuboBlock->AttachToActor(Cubo, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
-						CuboBlock->SetColor(CuboPieceInfo.CubeColor);
+						CuboBlock->SetDefaultMaterial(CuboPieceInfo.DefaultMaterial);
+						CuboBlock->SetHighlightMaterial(CuboPieceInfo.HighlightMaterial);
 						CuboBlock->SetActorScale3D(BlockScale);
 						FVector Location(0.f, r * PieceMoveInfo.BlockSpace, - c * PieceMoveInfo.BlockSpace); // ignore X
 						r++;

@@ -18,25 +18,20 @@ public:
 	void Highlight();
 	void Unhighlight();
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Cubo")
-	FName ColorParam;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Cubo")
-	FName HighlightParam;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Cubo")
-	float HighlightPercentage;
-
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	UMaterialInstanceDynamic* DynamicMaterial;
-	FLinearColor Color;
-
 public:	
-	UFUNCTION(BlueprintCallable)
-	void SetColor(const FLinearColor& CubeColor);
+	void SetDefaultMaterial(UMaterialInstance* Material);
+	UMaterialInstance* GetDefaultMaterial() const;
+	void SetHighlightMaterial(UMaterialInstance* HMaterial);
 
-	FLinearColor GetColor() const;
+	FLinearColor GetCubeColor() const;
+
+private:
+	UPROPERTY()
+	UMaterialInstance* DefaultMaterial;
+	UPROPERTY()
+	UMaterialInstance* HighlightMaterial;
 };

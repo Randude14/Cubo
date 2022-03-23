@@ -78,12 +78,14 @@ void ACuboHandController::Tick(float DeltaTime)
 	{
 		FCuboGridLocation CurrentDragged = Grid->LinePlaneIntersect(CuboPiece, LaserBeam->GetComponentLocation(), LaserBeam->GetForwardVector());
 
-		if(DraggedLocation.X != CurrentDragged.X)
+		if( FMath::Abs(DraggedLocation.X - CurrentDragged.X) >= 2 )
 		{
 			int Delta = DraggedLocation.X - CurrentDragged.X;
 
-			Grid->TryMovePieceRL(CuboPiece, (Delta < 0) ? true : false );
-			DraggedLocation = CurrentDragged;
+			if(Grid->TryMovePieceRL(CuboPiece, (Delta < 0) ? true : false ))
+			{
+				DraggedLocation = CurrentDragged;
+			}
 		}
 	}
 }

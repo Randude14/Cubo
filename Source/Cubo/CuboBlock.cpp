@@ -5,8 +5,6 @@
 
 ACuboBlock::ACuboBlock()
 {
-	ColorParam = FName("CubeColor");
-	HighlightParam = FName("CubeHighlight");
 }
 
 // Called when the game starts or when spawned
@@ -18,54 +16,46 @@ void ACuboBlock::BeginPlay()
 
 void ACuboBlock::Highlight()
 {
-	if(DynamicMaterial)
+	if(GetStaticMeshComponent() && HighlightMaterial)
 	{
-		DynamicMaterial->SetScalarParameterValue(HighlightParam, HighlightPercentage);
+		GetStaticMeshComponent()->SetMaterial(0, HighlightMaterial);
 	}
 }
 
 void ACuboBlock::Unhighlight()
 {
-	if(DynamicMaterial)
+	if(GetStaticMeshComponent() && DefaultMaterial)
 	{
-		DynamicMaterial->SetScalarParameterValue(HighlightParam, 0.f);
+		GetStaticMeshComponent()->SetMaterial(0, DefaultMaterial);
 	}
 }
 
-void ACuboBlock::SetColor(const FLinearColor& CubeColor)
+void ACuboBlock::SetDefaultMaterial(UMaterialInstance* Material)
 {
-	if(! DynamicMaterial && GetStaticMeshComponent())
-	{
-		UMaterialInterface* MaterialInterface = GetStaticMeshComponent()->GetMaterial(0);
-
-		if(MaterialInterface)
-		{
-			DynamicMaterial = UMaterialInstanceDynamic::Create(MaterialInterface, this, FName("CubeMaterial"));
-
-			if(DynamicMaterial)
-			{
-				GetStaticMeshComponent()->SetMaterial(0, DynamicMaterial);
-			}
-			else
-			{
-				UE_LOG(LogTemp, Error, TEXT("Failed to create a UMaterialInstanceDynamic for %s."), *GetName())
-			}
-		}
-		else
-		{
-			UE_LOG(LogTemp, Error, TEXT("Failed to set color. No material found for %s."), *GetName())
-		}
-	}
-	
-	if(DynamicMaterial)
-	{
-		DynamicMaterial->SetVectorParameterValue(ColorParam, CubeColor);
-		Color = CubeColor;
-	}
+	DefaultMaterial = Material;
+	Unhighlight();
 }
 
-FLinearColor ACuboBlock::GetColor() const
+UMaterialInstance* ACuboBlock::GetDefaultMaterial() const
 {
-	return Color;
+	return DefaultMaterial;
 }
 
+void ACuboBlock::SetHighlightMaterial(UMaterialInstance* HMaterial)
+{
+	HighlightMaterial = HMaterial;
+}
+
+FLinearColor ACuboBlock::GetCubeColor() const
+{
+	if(DefaultMaterial)
+	{
+		FHashedMaterialParameterInfo ParameterInfo(FName("CubeColor"));
+		FLinearColor CubeColor;
+
+		DefaultMaterial->GetVectorParameterValue(ParameterInfo, CubeColor);
+		return CubeColor;
+	}
+
+	return FLinearColor::Transparent;
+}
