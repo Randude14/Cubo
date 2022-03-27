@@ -3,36 +3,84 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Components/WidgetComponent.h"
-#include "GameFramework/Actor.h"
+#include "Blueprint/UserWidget.h"
+#include "Delegates/Delegate.h"
 #include "CuboMainMenu.generated.h"
 
+class UWidgetSwitcher;
+class UButton;
+class UTextBlock;
+
+enum EMenuSummonReason
+{
+	BEGINNING,
+	PAUSE,
+	GAMEOVER
+};
+
 UCLASS()
-class CUBO_API ACuboMainMenu : public AActor
+class CUBO_API UCuboMainMenu : public UUserWidget
 {
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this actor's properties
-	ACuboMainMenu();
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Cubo")
-	USceneComponent* MenuRoot;
+	UPROPERTY(BlueprintReadWrite, meta=(BindWidget), Category="Cubo")
+	UWidgetSwitcher* MenuWidgetSwitcher;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Cubo")
-	UWidgetComponent* NewGame;
+	UPROPERTY(BlueprintReadWrite, meta=(BindWidget), Category="Cubo")
+	UButton* NewGameButton;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Cubo")
-	UWidgetComponent* Settings;
+	UPROPERTY(BlueprintReadWrite, meta=(BindWidget), Category="Cubo")
+	UButton* ResumeGameButton;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Cubo")
-	UWidgetComponent* QuitGame;
+	UPROPERTY(BlueprintReadWrite, meta=(BindWidget), Category="Cubo")
+	UButton* SettingsButton;
 
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+	UPROPERTY(BlueprintReadWrite, meta=(BindWidget), Category="Cubo")
+	UButton* QuitGameButton;
 
-public:
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	UPROPERTY(BlueprintReadWrite, meta=(BindWidget), Category="Cubo")
+	UButton* NewGameConfirmButton;
+
+	UPROPERTY(BlueprintReadWrite, meta=(BindWidget), Category="Cubo")
+	UButton* NewGameDenyButton;
+
+	UPROPERTY(BlueprintReadWrite, meta=(BindWidget), Category="Cubo")
+	UTextBlock* GameOverLabel;
+
+	// callback to the cubo menu actor so we can close this menu
+	FSimpleMulticastDelegate OnMenuClosed;
+
+	// Index in the widget switcher for the main menu
+	UPROPERTY(EditAnywhere, Category="Cubo")
+	int32 MainIndex;
+
+	// Index in the widget switcher for the settings menu
+	UPROPERTY(EditAnywhere, Category="Cubo")
+	int32 SettingsIndex;
+
+	// Index in the widget switcher for the confirm new game window
+	UPROPERTY(EditAnywhere, Category="Cubo")
+	int32 ConfirmNewGameIndex;
+
+	virtual void NativeOnInitialized() override;
+
+private:
+	UPROPERTY()
+	class ACuboGrid* Grid;
+
+private:
+	UFUNCTION()
+	void NewGamePressed();
+	UFUNCTION()
+	void QuitGamePressed();
+	UFUNCTION()
+	void ResumeGamePressed();
+	UFUNCTION()
+	void SettingsPressed();
+	UFUNCTION()
+	void ConfirmNewGamePressed();
+	UFUNCTION()
+	void DenyNewGamePressed();
 };

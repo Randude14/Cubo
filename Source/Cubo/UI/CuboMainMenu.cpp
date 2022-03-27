@@ -1,31 +1,56 @@
-﻿
+﻿// Fill out your copyright notice in the Description page of Project Settings.
+
+
 #include "CuboMainMenu.h"
+#include "Kismet/GameplayStatics.h"
+#include "Cubo/CuboFramework/CuboGrid.h"
 
+#include "Components/Button.h"
 
-ACuboMainMenu::ACuboMainMenu()
+void UCuboMainMenu::NativeOnInitialized()
 {
-	MenuRoot = CreateDefaultSubobject<USceneComponent>("MenuRoot");
-	SetRootComponent(MenuRoot);
+	NewGameButton->OnReleased.AddDynamic(this, &UCuboMainMenu::UCuboMainMenu::NewGamePressed);
+	QuitGameButton->OnReleased.AddDynamic(this, &UCuboMainMenu::QuitGamePressed);
+	ResumeGameButton->OnReleased.AddDynamic(this, &UCuboMainMenu::ResumeGamePressed);
+	SettingsButton->OnReleased.AddDynamic(this, &UCuboMainMenu::SettingsPressed);
+	NewGameConfirmButton->OnReleased.AddDynamic(this, &UCuboMainMenu::ConfirmNewGamePressed);
+	NewGameDenyButton->OnReleased.AddDynamic(this, &UCuboMainMenu::DenyNewGamePressed);
+
+	TArray<AActor*> Grids;
+	UGameplayStatics::GetAllActorsOfClass(this, ACuboGrid::StaticClass(), Grids);
+
+	if(Grids.Num() > 0)
+	{
+		Grid = Cast<ACuboGrid>(Grids[0]);
+	}
+}
+
+void UCuboMainMenu::NewGamePressed()
+{
 	
-	NewGame = CreateDefaultSubobject<UWidgetComponent>("NewGame");
-	NewGame->SetupAttachment(MenuRoot);
-
-	Settings = CreateDefaultSubobject<UWidgetComponent>("Settings");
-	Settings->SetupAttachment(MenuRoot);
-
-	QuitGame = CreateDefaultSubobject<UWidgetComponent>("QuitGame");
-	QuitGame->SetupAttachment(MenuRoot);
 }
 
-void ACuboMainMenu::BeginPlay()
+void UCuboMainMenu::QuitGamePressed()
 {
-	Super::BeginPlay();
 	
 }
 
-// Called every frame
-void ACuboMainMenu::Tick(float DeltaTime)
+void UCuboMainMenu::ResumeGamePressed()
 {
-	Super::Tick(DeltaTime);
+	
 }
 
+void UCuboMainMenu::SettingsPressed()
+{
+	
+}
+
+void UCuboMainMenu::ConfirmNewGamePressed()
+{
+	
+}
+
+void UCuboMainMenu::DenyNewGamePressed()
+{
+	
+}

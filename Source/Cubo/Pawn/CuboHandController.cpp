@@ -94,7 +94,7 @@ void ACuboHandController::UpdateLaserBeam()
 {
 	UWorld* World = GetWorld();
 
-	if(World == nullptr || IsControllerGrabbing())
+	if(World == nullptr )//|| IsControllerGrabbing())
 	{
 		return;
 	}
@@ -194,6 +194,10 @@ void ACuboHandController::AcceleratePressed()
 	{
 		CuboPiece->SetAccelerate(true);
 	}
+	else
+	{
+		LaserDirection->PressPointerKey(EKeys::LeftMouseButton);
+	}
 }
 
 void ACuboHandController::AccelerateReleased()
@@ -201,6 +205,10 @@ void ACuboHandController::AccelerateReleased()
 	if(CuboPiece)
 	{
 		CuboPiece->SetAccelerate(false);
+	}
+	else
+	{
+		LaserDirection->ReleasePointerKey(EKeys::LeftMouseButton);
 	}
 }
 
