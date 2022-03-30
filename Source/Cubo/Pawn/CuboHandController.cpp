@@ -7,6 +7,7 @@
 #include "HeadMountedDisplayFunctionLibrary.h"
 #include "Components/WidgetInteractionComponent.h"
 #include "Cubo/CuboFramework/CuboPiece.h"
+#include "Cubo/UI/CuboMenuActor.h"
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values
@@ -41,20 +42,15 @@ void ACuboHandController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	TArray<AActor*> Grids;
-	UGameplayStatics::GetAllActorsOfClass(this, ACuboGrid::StaticClass(), Grids);
+	TArray<AActor*> Actors;
+	UGameplayStatics::GetAllActorsOfClass(this, ACuboGrid::StaticClass(), Actors);
 
-	if(Grids.Num() > 0)
+	if(Actors.Num() > 0)
 	{
-		Grid = Cast<ACuboGrid>(Grids[0]);
+		Grid = Cast<ACuboGrid>(Actors[0]);
 	}
 
 	UseKbm = ! UHeadMountedDisplayFunctionLibrary::IsHeadMountedDisplayConnected();
-
-	if(UseKbm)
-	{
-		//LaserBeam->SetVisibility(false);
-	}
 }
 
 bool ACuboHandController::IsControllerGrabbing()
@@ -94,7 +90,7 @@ void ACuboHandController::UpdateLaserBeam()
 {
 	UWorld* World = GetWorld();
 
-	if(World == nullptr )//|| IsControllerGrabbing())
+	if(World == nullptr || (!bDebugHand && IsControllerGrabbing()) )
 	{
 		return;
 	}
@@ -128,6 +124,11 @@ void ACuboHandController::UpdateLaserBeam()
 	if(SelectedActor && SelectedActor->GetAttachParentActor())
 	{
 		SelectedPiece = Cast<ACuboPiece>(SelectedActor->GetAttachParentActor());
+	}
+
+	if(! SelectedPiece && SelectedActor)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Ditto      %s"), *SelectedActor->GetName())
 	}
 	
 	if(SelectedPiece != CuboPiece)
@@ -166,7 +167,7 @@ void ACuboHandController::GrabPressed()
 	{
 		CuboPiece->GrabPiece(this);
 		
-		if(Grid)
+		if(Grid && !Grid->IsPaused())
 		{
 			DraggedLocation = Grid->LinePlaneIntersect(CuboPiece, LaserBeam->GetComponentLocation(), LaserBeam->GetForwardVector());
 		}
@@ -190,9 +191,16 @@ void ACuboHandController::GrabReleased()
 
 void ACuboHandController::AcceleratePressed()
 {
-	if(CuboPiece)
+	if(Grid && !Grid->IsPaused())
 	{
-		CuboPiece->SetAccelerate(true);
+		if(CuboPiece)
+		{
+			CuboPiece->SetAccelerate(true);
+		}
+		else
+		{
+			LaserDirection->PressPointerKey(EKeys::LeftMouseButton);
+		}
 	}
 	else
 	{
@@ -202,9 +210,16 @@ void ACuboHandController::AcceleratePressed()
 
 void ACuboHandController::AccelerateReleased()
 {
-	if(CuboPiece)
+	if(Grid && !Grid->IsPaused())
 	{
-		CuboPiece->SetAccelerate(false);
+		if(CuboPiece)
+		{
+			CuboPiece->SetAccelerate(false);
+		}
+		else
+		{
+			LaserDirection->ReleasePointerKey(EKeys::LeftMouseButton);
+		}
 	}
 	else
 	{
@@ -214,7 +229,7 @@ void ACuboHandController::AccelerateReleased()
 
 void ACuboHandController::TryRotatePiece()
 {
-	if(Grid)
+	if(Grid && !Grid->IsPaused())
 	{
 		Grid->TryRotatePiece(CuboPiece);
 	}
@@ -227,7 +242,7 @@ void ACuboHandController::MovePieceStopped()
 
 void ACuboHandController::TryMovePieceLeft()
 {
-	if(!bUseMotion && Grid && CuboPiece && IsControllerGrabbing() && MovingTimer <= 0.f)
+	if(!bUseMotion && Grid && !Grid->IsPaused() && CuboPiece && IsControllerGrabbing() && MovingTimer <= 0.f)
 	{
 		Grid->TryMovePieceRL(CuboPiece, false);
 		MovingTimer = ControllerMoveInfo.MovePieceTime;            
@@ -236,7 +251,7 @@ void ACuboHandController::TryMovePieceLeft()
 
 void ACuboHandController::TryMovePieceRight()
 {
-	if(!bUseMotion && Grid && CuboPiece && IsControllerGrabbing() && MovingTimer <= 0.f)
+	if(!bUseMotion && Grid && !Grid->IsPaused() && CuboPiece && IsControllerGrabbing() && MovingTimer <= 0.f)
 	{
 		Grid->TryMovePieceRL(CuboPiece, true);
 		MovingTimer = ControllerMoveInfo.MovePieceTime;

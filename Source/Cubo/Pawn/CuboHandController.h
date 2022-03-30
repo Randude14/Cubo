@@ -49,6 +49,9 @@ public:
 	UPROPERTY(EditAnywhere, Category="Cubo")
 	FControllerMoveInfo ControllerMoveInfo;
 
+	UPROPERTY(EditAnywhere, Category="Cubo")
+	bool bDebugHand=false;
+
 	// How far the laser pointer should trace from the controller in world units
 	UPROPERTY(EditAnywhere, Category="Cubo")
 	float MaxLaserDistance;

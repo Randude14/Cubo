@@ -13,11 +13,6 @@ ACuboPieceQueue::ACuboPieceQueue()
 void ACuboPieceQueue::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	for(int i = 0; i < PieceQueueSize; i++)
-	{
-		SpawnPiece();
-	}
 }
 
 void ACuboPieceQueue::SpawnPiece()
@@ -115,32 +110,44 @@ void ACuboPieceQueue::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
+void ACuboPieceQueue::EmptyQueue()
+{
+	for(ACuboPiece* Piece : CuboPieces)
+	{
+		if(Piece)
+		{
+			Piece->Destroy();
+		}
+	}
+	CuboPieces.Empty();
+}
+
 ACuboPiece* ACuboPieceQueue::PopPiece()
 {
-	if(CuboPieces.Num() > 0)
+	while(CuboPieces.Num() < PieceQueueSize)
 	{
-		ACuboPiece* Popped = CuboPieces[0];
-
-		if(CuboPieces.Num() > 1)
-		{
-			ACuboPiece* NextPiece = CuboPieces[1];
-			float MoveUpBy = GetActorLocation().Z - NextPiece->GetActorLocation().Z;
-			FVector MoveVector = FVector(0.f, 0.f, MoveUpBy);
-			NextPiece->AddPieceOffset(MoveVector);
-				
-			for(int i = 2; i < CuboPieces.Num(); i++)
-			{
-				ACuboPiece* Piece = CuboPieces[i];
-				Piece->AddPieceOffset(MoveVector);
-			}
-		}
-		
-		CuboPieces.RemoveAt(0);
-
 		SpawnPiece();
-
-		return Popped;
 	}
 	
-	return nullptr;
+	ACuboPiece* Popped = CuboPieces[0];
+
+	if(CuboPieces.Num() > 1)
+	{
+		ACuboPiece* NextPiece = CuboPieces[1];
+		float MoveUpBy = GetActorLocation().Z - NextPiece->GetActorLocation().Z;
+		FVector MoveVector = FVector(0.f, 0.f, MoveUpBy);
+		NextPiece->AddPieceOffset(MoveVector);
+				
+		for(int i = 2; i < CuboPieces.Num(); i++)
+		{
+			ACuboPiece* Piece = CuboPieces[i];
+			Piece->AddPieceOffset(MoveVector);
+		}
+	}
+		
+	CuboPieces.RemoveAt(0);
+
+	SpawnPiece();
+
+	return Popped;	
 }

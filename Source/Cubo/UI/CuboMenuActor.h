@@ -22,12 +22,21 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Cubo")
 	UWidgetComponent* MainMenuComponent;
 
+	UFUNCTION(BlueprintCallable, Category="Cubo")
+	void ShowScreen(FString ID);
+
+	UFUNCTION(BlueprintCallable, Category="Cubo")
+	void CloseScreen();
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	UFUNCTION()
+	void OnVisibilityChanged(ESlateVisibility Visibility);
+
 	UPROPERTY()
-	class UCuboMainMenu* MainMenu;
+	class UCuboMenu* MenuScreen;
 
 public:
 	// Called every frame

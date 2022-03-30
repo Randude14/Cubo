@@ -3,6 +3,8 @@
 
 #include "CuboPiece.h"
 #include "DrawDebugHelpers.h"
+#include "ToolContextInterfaces.h"
+#include "Kismet/GameplayStatics.h"
 
 ACuboGrid::ACuboGrid()
 {
@@ -57,6 +59,8 @@ void ACuboGrid::BeginPlay()
 
 		RotateErrorPiece->Init(false, 0.f, 0.f);
 		RotateErrorPiece->SetActorHiddenInGame(true);
+		
+		Pause();
 	}
 }
 
@@ -64,11 +68,6 @@ void ACuboGrid::BeginPlay()
 void ACuboGrid::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	if(bGamePaused)
-	{
-		return;
-	}
 
 	if(CurrentPiece == nullptr)
 	{
@@ -129,6 +128,27 @@ void ACuboGrid::Tick(float DeltaTime)
 			DrawDebugLine(GetWorld(), IndexLocation, IndexOutLocation, FColor::Red, false, -1, 0, 5.f);
 		}
 	}
+}
+
+void ACuboGrid::NewGame()
+{
+	SetActorTickEnabled(true);
+	PieceQueue->EmptyQueue();
+
+	TArray<int32> Indicies;
+	Grid.GetKeys(Indicies);
+
+	for(int Index : Indicies)
+	{
+		if(ACuboBlock* Block = Grid[Index])
+		{
+			Block->Destroy();
+		}
+	}
+	Grid.Empty();
+	GridScore = 0;
+	ScoreChanged.Broadcast(this, 0, 0);
+	bGamePaused = false;
 }
 
 void ACuboGrid::UpdateHighlighter()
@@ -275,8 +295,9 @@ bool ACuboGrid::TryMovePieceDown(ACuboPiece* Piece, bool bSpawnBlocks)
 			}
 			return false;
 		}
+		return true;
 	}
-	return true;
+	return false;
 }
 
 bool ACuboGrid::IsPieceInLegalSpot(ACuboPiece* Piece)
@@ -315,8 +336,9 @@ bool ACuboGrid::IsPieceInLegalSpot(ACuboPiece* Piece)
 				}
 			}
 		}
+		return true;
 	}
-	return true;
+	return false;
 }
 
 FCuboGridLocation ACuboGrid::ConvertToGridSpace(FVector Location)

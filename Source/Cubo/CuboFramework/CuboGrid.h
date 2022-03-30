@@ -122,6 +122,8 @@ public:
 	// Attempt to "drag" the piece along the grid using it as a plane for intersection
 	FCuboGridLocation LinePlaneIntersect(ACuboPiece* Piece, FVector Forward, FVector DragPointer);
 	float GetBlockSpacing() { if(PieceQueue){ return PieceQueue->PieceMoveInfo.BlockSpace; } return 0.f;  };
+
+	void NewGame();
 	
 	FCuboGridLocation ConvertToGridSpace(FVector Location);
 
@@ -129,12 +131,14 @@ public:
 	void Pause()
 	{
 		bGamePaused = true;
+		SetActorTickEnabled(false);
 	};
 
 	UFUNCTION(BlueprintCallable, Category="Cubo")
 	void Resume()
 	{
 		bGamePaused = false;
+		SetActorTickEnabled(true);
 	};
 
 	UFUNCTION(BlueprintCallable, Category="Cubo")
@@ -142,10 +146,4 @@ public:
 	{
 		return bGamePaused;
 	}
-
-	UFUNCTION(BlueprintCallable, Category="Cubo")
-	int32 GetGridScore() const
-	{
-		return GridScore;
-	};
 };

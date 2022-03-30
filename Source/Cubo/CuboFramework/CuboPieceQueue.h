@@ -97,6 +97,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Cubo")
 	FVector BlockScale;
 
+	void EmptyQueue();
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

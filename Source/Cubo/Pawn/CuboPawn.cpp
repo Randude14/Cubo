@@ -6,6 +6,10 @@
 #include "HeadMountedDisplayFunctionLibrary.h"
 #include "MotionControllerComponent.h"
 #include "Camera/CameraComponent.h"
+#include "Kismet/GameplayStatics.h"
+
+#include "Cubo/CuboFramework/CuboPlayerController.h"
+#include "Cubo/UI/CuboMenuActor.h"
 
 // Sets default values
 ACuboPawn::ACuboPawn()
@@ -51,6 +55,14 @@ void ACuboPawn::BeginPlay()
 	{
 		CameraComponent->SetRelativeLocation( KbmCameraLocation->GetRelativeLocation() );
 	}
+
+	TArray<AActor*> Actors;
+	UGameplayStatics::GetAllActorsOfClass(this, ACuboMenuActor::StaticClass(), Actors);
+
+	if(Actors.Num() > 0)
+	{
+		MenuActor = Cast<ACuboMenuActor>(Actors[0]);
+	}
 }
 
 void ACuboPawn::Tick(float DeltaTime)
@@ -84,7 +96,17 @@ void ACuboPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 void ACuboPawn::MenuButtonPressed()
 {
-	
+	if(MenuActor)
+	{
+		if(ACuboPlayerController* PlayerController = Cast<ACuboPlayerController>( GetController() ))
+		{
+			if(ACuboGrid* Grid = PlayerController->GetOwningGrid())
+			{
+				Grid->Pause();
+				MenuActor->ShowScreen("PauseMenu");
+			}
+		}
+	}
 }
 
 void ACuboPawn::ControllerTipSummon()
