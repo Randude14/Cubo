@@ -43,6 +43,19 @@ void ACuboPiece::Init(bool bShouldRotate, float NTime, float ATime)
 	}
 }
 
+void ACuboPiece::DestroyPiece()
+{
+	for(ACuboBlock* Block : Blocks)
+	{
+		if(Block)
+		{
+			Block->Destroy();
+		}
+	}
+	Destroy();
+}
+
+
 void ACuboPiece::BeginPlay()
 {
 	Super::BeginPlay();

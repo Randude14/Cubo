@@ -21,6 +21,7 @@ public:
 
 	void Init(bool bShouldRotate, float NTime, float ATime);
 
+	void DestroyPiece();
 	UPROPERTY(EditAnywhere)
 	UStaticMeshComponent* AnchorComponent;
 

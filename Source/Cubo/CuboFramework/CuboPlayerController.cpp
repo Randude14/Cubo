@@ -7,18 +7,32 @@
 
 void ACuboPlayerController::BeginPlay()
 {
-	TArray<AActor*> Grids;
-	UGameplayStatics::GetAllActorsOfClass(this, ACuboGrid::StaticClass(), Grids);
+	OwningGrid = GetActorOfClassFromWorld<ACuboGrid>(ACuboGrid::StaticClass());
+	MenuActor = GetActorOfClassFromWorld<ACuboMenuActor>(ACuboMenuActor::StaticClass());
+}
 
-	if(Grids.Num())
+template <class T>
+T* ACuboPlayerController::GetActorOfClassFromWorld(UClass* Class)
+{
+	TArray<AActor*> Actors;
+	UGameplayStatics::GetAllActorsOfClass(this, Class, Actors);
+
+	if(Actors.Num())
 	{
-		OwningGrid = Cast<ACuboGrid>(Grids[0]);
+		T* ResultActor = Cast<T>(Actors[0]);
+		return ResultActor;
 	}
+	return nullptr;
 }
 
 ACuboGrid* ACuboPlayerController::GetOwningGrid() const
 {
 	return OwningGrid;
+}
+
+ACuboMenuActor* ACuboPlayerController::GetMenuActor() const
+{
+	return MenuActor;
 }
 
 void ACuboPlayerController::SaveSettings()

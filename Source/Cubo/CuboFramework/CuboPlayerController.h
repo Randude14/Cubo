@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "CuboGrid.h"
+#include "Cubo/UI/CuboMenuActor.h"
 #include "UObject/Object.h"
 #include "CuboPlayerController.generated.h"
 
@@ -25,7 +26,14 @@ public:
 	bool LockOnAccelerate();
 
 	ACuboGrid* GetOwningGrid() const;
+	ACuboMenuActor* GetMenuActor() const;
+
+	template<class T>
+	T* GetActorOfClassFromWorld(UClass* Class);
 
 protected:
+	UPROPERTY()
 	ACuboGrid* OwningGrid;
+	UPROPERTY()
+	ACuboMenuActor* MenuActor;
 };

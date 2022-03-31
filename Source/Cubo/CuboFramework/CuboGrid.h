@@ -90,6 +90,7 @@ protected:
 	ACuboPiece* RotateErrorPiece;
 	
 	bool bGamePaused = false;
+	bool bGameOver = false;
 	float PieceMoveTimer = 0.f;
 	float RotateErrorTimer;
 	
@@ -145,5 +146,11 @@ public:
 	bool IsPaused() const
 	{
 		return bGamePaused;
+	}
+
+	UFUNCTION(BlueprintCallable, Category="Cubo")
+	bool IsGameOver() const
+	{
+		return bGameOver;
 	}
 };

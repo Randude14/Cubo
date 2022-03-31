@@ -28,6 +28,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Cubo")
 	void CloseScreen();
 
+	UFUNCTION(BlueprintCallable, Category="Cubo")
+	bool CanForceClose();
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

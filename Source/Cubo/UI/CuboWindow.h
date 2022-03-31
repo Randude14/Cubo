@@ -33,5 +33,5 @@ public:
 protected:
 	// Indicates that the user can press the menu to close this window
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Cubo")
-	bool bCanForceClose = true;
+	bool bCanForceClose = false;
 };

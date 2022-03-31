@@ -2,6 +2,7 @@
 #include "CuboGrid.h"
 
 #include "CuboPiece.h"
+#include "CuboPlayerController.h"
 #include "DrawDebugHelpers.h"
 #include "ToolContextInterfaces.h"
 #include "Kismet/GameplayStatics.h"
@@ -68,6 +69,22 @@ void ACuboGrid::BeginPlay()
 void ACuboGrid::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if(bGameOver)
+	{
+		HighlighterPiece->SetActorHiddenInGame(true);
+		RotateErrorPiece->SetActorHiddenInGame(true);
+		Pause();
+
+		if(ACuboPlayerController* PlayerController = Cast<ACuboPlayerController>( GetWorld()->GetFirstPlayerController() ))
+		{
+			if(ACuboMenuActor* MenuActor = PlayerController->GetMenuActor())
+			{
+				MenuActor->ShowScreen("GameOverMenu");
+			}
+		}
+		return;
+	}
 
 	if(CurrentPiece == nullptr)
 	{
@@ -148,7 +165,7 @@ void ACuboGrid::NewGame()
 	Grid.Empty();
 	GridScore = 0;
 	ScoreChanged.Broadcast(this, 0, 0);
-	bGamePaused = false;
+	bGamePaused = bGameOver = false;
 }
 
 void ACuboGrid::UpdateHighlighter()
@@ -286,6 +303,7 @@ bool ACuboGrid::TryMovePieceDown(ACuboPiece* Piece, bool bSpawnBlocks)
 					if(PieceGridLocation.Y < 0)
 					{
 						Block->SetDefaultMaterial(OutOfBoundsMaterial);
+						bGameOver = true;
 					}
 				}
 

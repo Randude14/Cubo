@@ -102,8 +102,19 @@ void ACuboPawn::MenuButtonPressed()
 		{
 			if(ACuboGrid* Grid = PlayerController->GetOwningGrid())
 			{
-				Grid->Pause();
-				MenuActor->ShowScreen("PauseMenu");
+				if(MenuActor->IsHidden())
+				{
+					if(! Grid->IsPaused())
+					{
+						Grid->Pause();
+						MenuActor->ShowScreen("PauseMenu");
+					}
+				}
+				else if(MenuActor->CanForceClose())
+				{
+					Grid->Resume();
+					MenuActor->CloseScreen();
+				}
 			}
 		}
 	}

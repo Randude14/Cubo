@@ -100,3 +100,15 @@ void UCuboMenu::CloseWindow()
 	SetVisibility(ESlateVisibility::Hidden);
 	WindowStack.Empty();
 }
+
+bool UCuboMenu::CanForceClose()
+{
+	if(IsVisible())
+	{
+		if(UCuboWindow* Window = Cast<UCuboWindow>(MenuWidgetSwitcher->GetActiveWidget()))
+		{
+			return Window->CanForceClose();
+		}
+	}
+	return true;
+}

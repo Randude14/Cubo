@@ -116,7 +116,7 @@ void ACuboPieceQueue::EmptyQueue()
 	{
 		if(Piece)
 		{
-			Piece->Destroy();
+			Piece->DestroyPiece();
 		}
 	}
 	CuboPieces.Empty();

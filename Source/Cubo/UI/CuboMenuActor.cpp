@@ -45,9 +45,19 @@ void ACuboMenuActor::ShowScreen(FString ID)
 	}
 }
 
-void ACuboMenuActor::CloseScreen()
+bool ACuboMenuActor::CanForceClose()
 {
 	if(MenuScreen)
+	{
+		return MenuScreen->CanForceClose();
+	}
+	return true;
+}
+
+
+void ACuboMenuActor::CloseScreen()
+{
+	if(MenuScreen && MenuScreen->CanForceClose())
 	{
 		SetActorHiddenInGame(true);
 		MainMenuComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);

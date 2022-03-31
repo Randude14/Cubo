@@ -8,6 +8,7 @@ void UCuboPauseMenu::NativeOnInitialized()
 	{
 		ResumeButton->OnReleased.AddDynamic(this, &UCuboPauseMenu::ResumeButtonPressed);
 	}
+	bCanForceClose = true;
 }
 
 void UCuboPauseMenu::ResumeButtonPressed()

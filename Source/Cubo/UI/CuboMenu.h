@@ -29,6 +29,7 @@ public:
 	
 	void ShowWindow(FString ID);
 	void CloseWindow();
+	bool CanForceClose();
 
 	virtual void NativeOnInitialized() override;
 	virtual void ReleaseSlateResources(bool bReleaseChildren) override;
