@@ -27,6 +27,19 @@ void ACuboMenuActor::BeginPlay()
 	}
 }
 
+void ACuboMenuActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+
+	if(MenuScreen)
+	{
+		MenuScreen->OnVisibilityChanged.RemoveAll(this);
+	}
+
+	MenuScreen = nullptr;
+}
+
+
 void ACuboMenuActor::OnVisibilityChanged(ESlateVisibility Visibility)
 {
 	if(Visibility == ESlateVisibility::Hidden)

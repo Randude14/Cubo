@@ -32,7 +32,7 @@ public:
 	bool CanForceClose();
 
 	virtual void NativeOnInitialized() override;
-	virtual void ReleaseSlateResources(bool bReleaseChildren) override;
+	virtual void NativeDestruct() override;
 
 private:
 	UPROPERTY()

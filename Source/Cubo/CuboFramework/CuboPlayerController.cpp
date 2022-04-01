@@ -7,6 +7,8 @@
 
 void ACuboPlayerController::BeginPlay()
 {
+	Super::BeginPlay();
+	
 	OwningGrid = GetActorOfClassFromWorld<ACuboGrid>(ACuboGrid::StaticClass());
 	MenuActor = GetActorOfClassFromWorld<ACuboMenuActor>(ACuboMenuActor::StaticClass());
 }

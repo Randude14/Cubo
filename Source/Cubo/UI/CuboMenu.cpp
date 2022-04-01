@@ -21,7 +21,7 @@ void UCuboMenu::NativeOnInitialized()
 
 		if(Class)
 		{
-			UCuboWindow* Widget = Cast<UCuboWindow>( CreateWidget(GetOwningPlayer(), Class, FName(WindowID)) );
+			UCuboWindow* Widget = CreateWidget<UCuboWindow>(GetWorld(), Class, FName(WindowID));
 
 			if(Widget)
 			{
@@ -34,25 +34,20 @@ void UCuboMenu::NativeOnInitialized()
 	}
 }
 
-void UCuboMenu::ReleaseSlateResources(bool bReleaseChildren)
+void UCuboMenu::NativeDestruct()
 {
-	Super::ReleaseSlateResources(bReleaseChildren);
+	Super::NativeDestruct();
 
-	TArray<FString> WindowIDs;
-	WindowWidgets.GetKeys(WindowIDs);
-	
-	for(FString ID : WindowIDs)
-	{
-		UCuboWindow* Window = WindowWidgets[ID];
-		Window->ReleaseSlateResources(bReleaseChildren);
-		Window = nullptr;
-	}
-	
-	WindowWidgets.Empty();
 	if(MenuWidgetSwitcher)
 	{
-		MenuWidgetSwitcher->ReleaseSlateResources(bReleaseChildren);
+		while(MenuWidgetSwitcher->GetChildrenCount() > 0)
+		{
+			MenuWidgetSwitcher->RemoveChildAt(0);
+		}
 	}
+
+
+	WindowWidgets.Empty();
 }
 
 void UCuboMenu::OnWindowOpenRequest(const FString& WindowName)

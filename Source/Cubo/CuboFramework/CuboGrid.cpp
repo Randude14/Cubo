@@ -42,9 +42,7 @@ void ACuboGrid::BeginPlay()
 		{
 			ACuboBlock* Block = GetWorld()->SpawnActor<ACuboBlock>(HighlightBlockClass);
 			Block->AttachToActor(HighlighterPiece, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
-
-			UMaterialInstanceDynamic* InstanceDynamic = UMaterialInstanceDynamic::Create(HighlightMaterial, this);
-			Block->SetDefaultMaterial(InstanceDynamic);
+			Block->SetDefaultMaterial(HighlightMaterial);
 		}
 
 		HighlighterPiece->Init(false, 0.f, 0.f);
@@ -193,12 +191,6 @@ void ACuboGrid::UpdateHighlighter()
 					HBlock->SetActorHiddenInGame(false);
 					HBlock->SetActorScale3D(Block->GetActorScale());
 					HBlock->SetActorLocation(Block->GetActorLocation());
-					
-					if(UMaterialInstanceDynamic* Dynamic = Cast<UMaterialInstanceDynamic>(HBlock->GetDefaultMaterial()))
-					{
-						FLinearColor Color = Block->GetCubeColor();
-						Dynamic->SetVectorParameterValue(FName("CubeColor"), Color);
-					}
 				}
 				else
 				{
