@@ -1,0 +1,476 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="65269daa-26bf-438d-8b1a-f3381b88facb" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/Content/Audio/06_tetris_bgm_3.uasset" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Content/BP/UI/Menu/WBP_CuboConfirmNewGame.uasset" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Content/Mat/CustomTextMaterialInstanceLight.uasset" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Content/Mat/DefaultTextMaterialTranslucent.uasset" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Content/Models/Quest2_Controllers/quest2ControllerMAT_Inst.uasset" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Content/Tex/Cursor.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Config/DefaultEngine.ini" beforeDir="false" afterPath="$PROJECT_DIR$/Config/DefaultEngine.ini" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/BP/Map/BP_WaterPlanet.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BP/Map/BP_WaterPlanet.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/BP/Pawn/BP_BaseCuboHandController.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BP/Pawn/BP_BaseCuboHandController.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/BP/Pawn/BP_LeftCuboHandController.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BP/Pawn/BP_LeftCuboHandController.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/BP/Pawn/BP_RightCuboHandController.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BP/Pawn/BP_RightCuboHandController.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/BP/UI/BP_MenuActor.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BP/UI/BP_MenuActor.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/BP/UI/Menu/WBP_ConfirmNewGame.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/BP/UI/Menu/WBP_CuboMainMenu.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BP/UI/Menu/WBP_CuboMainMenu.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/BP/UI/Menu/WBP_CuboSettingsMenu.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BP/UI/Menu/WBP_CuboSettingsMenu.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/BP/UI/WBP_CuboMenu.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BP/UI/WBP_CuboMenu.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Maps/CuboMain.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Maps/CuboMain.umap" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Mat/M_PieceQueueGlass.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Mat/M_PieceQueueGlass.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Models/Quest2_Controllers/quest2ControllerMAT.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Models/Quest2_Controllers/quest2ControllerMAT.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/Cubo/Cubo.Build.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Cubo/Cubo.Build.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/Cubo/CuboFramework/CuboGrid.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Cubo/CuboFramework/CuboGrid.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/Cubo/CuboFramework/CuboGrid.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Cubo/CuboFramework/CuboGrid.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/Cubo/CuboFramework/CuboPiece.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Cubo/CuboFramework/CuboPiece.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/Cubo/CuboFramework/CuboPiece.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Cubo/CuboFramework/CuboPiece.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/Cubo/CuboFramework/CuboPlayerController.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Cubo/CuboFramework/CuboPlayerController.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/Cubo/CuboFramework/CuboPlayerController.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Cubo/CuboFramework/CuboPlayerController.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/Cubo/Pawn/CuboHandController.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Cubo/Pawn/CuboHandController.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/Cubo/Pawn/CuboHandController.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Cubo/Pawn/CuboHandController.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/Cubo/Pawn/CuboPawn.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Cubo/Pawn/CuboPawn.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/Cubo/Pawn/CuboPawn.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Cubo/Pawn/CuboPawn.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/Cubo/UI/CuboMenu.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Cubo/UI/CuboMenu.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/Cubo/UI/CuboMenu.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Cubo/UI/CuboMenu.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/Cubo/UI/CuboMenuActor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Cubo/UI/CuboMenuActor.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/Cubo/UI/CuboMenuActor.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Cubo/UI/CuboMenuActor.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/Cubo/UI/Menu/CuboConfirmNewGame.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Cubo/UI/Menu/CuboConfirmNewGame.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/Cubo/UI/Menu/CuboConfirmNewGame.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Cubo/UI/Menu/CuboConfirmNewGame.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/Cubo/UI/Menu/CuboMainMenu.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Cubo/UI/Menu/CuboMainMenu.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/Cubo/UI/Menu/CuboMainMenu.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Cubo/UI/Menu/CuboMainMenu.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/Cubo/UI/Menu/CuboPauseMenu.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Cubo/UI/Menu/CuboPauseMenu.cpp" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://C:/Program Files (x86)/Windows Kits/10/Include/10.0.19041.0/ucrt/corecrt_math.h" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/Cubo/CuboFramework/CuboPieceQueue.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/Cubo/Pawn/CuboPawn.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/Cubo/UI/Menu/CuboConfirmNewGame.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/Cubo/UI/Menu/CuboConfirmNewGame.h" root0="FORCE_HIGHLIGHTING" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectId" id="26DjoRRK5qKIs7QZNeHHPZ1V4qQ" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;XThreadsFramesViewSplitterKey&quot;: &quot;0.5033841&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;editor.preferences.fonts.default&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RunManager" selected="C++ Project.Cubo">
+    <configuration name="Cubo" type="CppProject" factoryName="C++ Project">
+      <configuration_1>
+        <option name="CONFIGURATION" value="DebugGame Editor" />
+        <option name="PLATFORM" value="Android" />
+        <option name="PROJECT_FILE_PATH" value="$PROJECT_DIR$/Intermediate/ProjectFiles/Cubo.vcxproj" />
+        <option name="EXE_PATH" value="$(LocalDebuggerCommand)" />
+        <option name="PROGRAM_PARAMETERS" value="$(LocalDebuggerCommandArguments)" />
+        <option name="WORKING_DIRECTORY" value="$(LocalDebuggerWorkingDirectory)" />
+        <option name="PASS_PARENT_ENVS" value="1" />
+        <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      </configuration_1>
+      <configuration_2>
+        <option name="CONFIGURATION" value="Development Editor" />
+        <option name="PLATFORM" value="Android" />
+        <option name="PROJECT_FILE_PATH" value="$PROJECT_DIR$/Intermediate/ProjectFiles/Cubo.vcxproj" />
+        <option name="EXE_PATH" value="$(LocalDebuggerCommand)" />
+        <option name="PROGRAM_PARAMETERS" value="$(LocalDebuggerCommandArguments)" />
+        <option name="WORKING_DIRECTORY" value="$(LocalDebuggerWorkingDirectory)" />
+        <option name="PASS_PARENT_ENVS" value="1" />
+        <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      </configuration_2>
+      <configuration_3>
+        <option name="CONFIGURATION" value="Development" />
+        <option name="PLATFORM" value="Win32" />
+        <option name="PROJECT_FILE_PATH" value="$PROJECT_DIR$/Intermediate/ProjectFiles/Cubo.vcxproj" />
+        <option name="EXE_PATH" value="$(LocalDebuggerCommand)" />
+        <option name="PROGRAM_PARAMETERS" value="$(LocalDebuggerCommandArguments)" />
+        <option name="WORKING_DIRECTORY" value="$(LocalDebuggerWorkingDirectory)" />
+        <option name="PASS_PARENT_ENVS" value="1" />
+        <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      </configuration_3>
+      <configuration_4>
+        <option name="CONFIGURATION" value="DebugGame" />
+        <option name="PLATFORM" value="Android" />
+        <option name="PROJECT_FILE_PATH" value="$PROJECT_DIR$/Intermediate/ProjectFiles/Cubo.vcxproj" />
+        <option name="EXE_PATH" value="$(LocalDebuggerCommand)" />
+        <option name="PROGRAM_PARAMETERS" value="$(LocalDebuggerCommandArguments)" />
+        <option name="WORKING_DIRECTORY" value="$(LocalDebuggerWorkingDirectory)" />
+        <option name="PASS_PARENT_ENVS" value="1" />
+        <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      </configuration_4>
+      <configuration_5>
+        <option name="CONFIGURATION" value="Shipping" />
+        <option name="PLATFORM" value="Win64" />
+        <option name="PROJECT_FILE_PATH" value="$PROJECT_DIR$/Intermediate/ProjectFiles/Cubo.vcxproj" />
+        <option name="EXE_PATH" value="$(LocalDebuggerCommand)" />
+        <option name="PROGRAM_PARAMETERS" value="$(LocalDebuggerCommandArguments)" />
+        <option name="WORKING_DIRECTORY" value="$(LocalDebuggerWorkingDirectory)" />
+        <option name="PASS_PARENT_ENVS" value="1" />
+        <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      </configuration_5>
+      <configuration_6>
+        <option name="CONFIGURATION" value="Shipping" />
+        <option name="PLATFORM" value="Win32" />
+        <option name="PROJECT_FILE_PATH" value="$PROJECT_DIR$/Intermediate/ProjectFiles/Cubo.vcxproj" />
+        <option name="EXE_PATH" value="$(LocalDebuggerCommand)" />
+        <option name="PROGRAM_PARAMETERS" value="$(LocalDebuggerCommandArguments)" />
+        <option name="WORKING_DIRECTORY" value="$(LocalDebuggerWorkingDirectory)" />
+        <option name="PASS_PARENT_ENVS" value="1" />
+        <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      </configuration_6>
+      <configuration_7>
+        <option name="CONFIGURATION" value="DebugGame Editor" />
+        <option name="PLATFORM" value="Win64" />
+        <option name="PROJECT_FILE_PATH" value="$PROJECT_DIR$/Intermediate/ProjectFiles/Cubo.vcxproj" />
+        <option name="EXE_PATH" value="$(LocalDebuggerCommand)" />
+        <option name="PROGRAM_PARAMETERS" value="$(LocalDebuggerCommandArguments)" />
+        <option name="WORKING_DIRECTORY" value="$(LocalDebuggerWorkingDirectory)" />
+        <option name="PASS_PARENT_ENVS" value="1" />
+        <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      </configuration_7>
+      <configuration_8>
+        <option name="CONFIGURATION" value="DebugGame Editor" />
+        <option name="PLATFORM" value="Win32" />
+        <option name="PROJECT_FILE_PATH" value="$PROJECT_DIR$/Intermediate/ProjectFiles/Cubo.vcxproj" />
+        <option name="EXE_PATH" value="$(LocalDebuggerCommand)" />
+        <option name="PROGRAM_PARAMETERS" value="$(LocalDebuggerCommandArguments)" />
+        <option name="WORKING_DIRECTORY" value="$(LocalDebuggerWorkingDirectory)" />
+        <option name="PASS_PARENT_ENVS" value="1" />
+        <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      </configuration_8>
+      <configuration_9>
+        <option name="CONFIGURATION" value="Development" />
+        <option name="PLATFORM" value="Android" />
+        <option name="PROJECT_FILE_PATH" value="$PROJECT_DIR$/Intermediate/ProjectFiles/Cubo.vcxproj" />
+        <option name="EXE_PATH" value="$(LocalDebuggerCommand)" />
+        <option name="PROGRAM_PARAMETERS" value="$(LocalDebuggerCommandArguments)" />
+        <option name="WORKING_DIRECTORY" value="$(LocalDebuggerWorkingDirectory)" />
+        <option name="PASS_PARENT_ENVS" value="1" />
+        <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      </configuration_9>
+      <configuration_10>
+        <option name="CONFIGURATION" value="Shipping" />
+        <option name="PLATFORM" value="Android" />
+        <option name="PROJECT_FILE_PATH" value="$PROJECT_DIR$/Intermediate/ProjectFiles/Cubo.vcxproj" />
+        <option name="EXE_PATH" value="$(LocalDebuggerCommand)" />
+        <option name="PROGRAM_PARAMETERS" value="$(LocalDebuggerCommandArguments)" />
+        <option name="WORKING_DIRECTORY" value="$(LocalDebuggerWorkingDirectory)" />
+        <option name="PASS_PARENT_ENVS" value="1" />
+        <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      </configuration_10>
+      <configuration_11>
+        <option name="CONFIGURATION" value="DebugGame" />
+        <option name="PLATFORM" value="Win32" />
+        <option name="PROJECT_FILE_PATH" value="$PROJECT_DIR$/Intermediate/ProjectFiles/Cubo.vcxproj" />
+        <option name="EXE_PATH" value="$(LocalDebuggerCommand)" />
+        <option name="PROGRAM_PARAMETERS" value="$(LocalDebuggerCommandArguments)" />
+        <option name="WORKING_DIRECTORY" value="$(LocalDebuggerWorkingDirectory)" />
+        <option name="PASS_PARENT_ENVS" value="1" />
+        <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      </configuration_11>
+      <configuration_12>
+        <option name="CONFIGURATION" value="DebugGame" />
+        <option name="PLATFORM" value="Win64" />
+        <option name="PROJECT_FILE_PATH" value="$PROJECT_DIR$/Intermediate/ProjectFiles/Cubo.vcxproj" />
+        <option name="EXE_PATH" value="$(LocalDebuggerCommand)" />
+        <option name="PROGRAM_PARAMETERS" value="$(LocalDebuggerCommandArguments)" />
+        <option name="WORKING_DIRECTORY" value="$(LocalDebuggerWorkingDirectory)" />
+        <option name="PASS_PARENT_ENVS" value="1" />
+        <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      </configuration_12>
+      <configuration_13>
+        <option name="CONFIGURATION" value="Development Editor" />
+        <option name="PLATFORM" value="Win32" />
+        <option name="PROJECT_FILE_PATH" value="$PROJECT_DIR$/Intermediate/ProjectFiles/Cubo.vcxproj" />
+        <option name="EXE_PATH" value="$(LocalDebuggerCommand)" />
+        <option name="PROGRAM_PARAMETERS" value="$(LocalDebuggerCommandArguments)" />
+        <option name="WORKING_DIRECTORY" value="$(LocalDebuggerWorkingDirectory)" />
+        <option name="PASS_PARENT_ENVS" value="1" />
+        <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      </configuration_13>
+      <configuration_14>
+        <option name="CONFIGURATION" value="Development Editor" />
+        <option name="PLATFORM" value="Win64" />
+        <option name="PROJECT_FILE_PATH" value="$PROJECT_DIR$/Intermediate/ProjectFiles/Cubo.vcxproj" />
+        <option name="EXE_PATH" value="$(LocalDebuggerCommand)" />
+        <option name="PROGRAM_PARAMETERS" value="$(LocalDebuggerCommandArguments)" />
+        <option name="WORKING_DIRECTORY" value="$(LocalDebuggerWorkingDirectory)" />
+        <option name="PASS_PARENT_ENVS" value="1" />
+        <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      </configuration_14>
+      <configuration_15>
+        <option name="CONFIGURATION" value="Development" />
+        <option name="PLATFORM" value="Win64" />
+        <option name="PROJECT_FILE_PATH" value="$PROJECT_DIR$/Intermediate/ProjectFiles/Cubo.vcxproj" />
+        <option name="EXE_PATH" value="$(LocalDebuggerCommand)" />
+        <option name="PROGRAM_PARAMETERS" value="$(LocalDebuggerCommandArguments)" />
+        <option name="WORKING_DIRECTORY" value="$(LocalDebuggerWorkingDirectory)" />
+        <option name="PASS_PARENT_ENVS" value="1" />
+        <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      </configuration_15>
+      <option name="DEFAULT_PROJECT_PATH" value="$PROJECT_DIR$/Intermediate/ProjectFiles/Cubo.vcxproj" />
+      <method v="2">
+        <option name="Build" />
+      </method>
+    </configuration>
+    <configuration name="UE4" type="CppProject" factoryName="C++ Project">
+      <configuration_1>
+        <option name="CONFIGURATION" value="DebugGame Editor" />
+        <option name="PLATFORM" value="Android" />
+        <option name="PROJECT_FILE_PATH" value="$PROJECT_DIR$/Intermediate/ProjectFiles/UE4.vcxproj" />
+        <option name="EXE_PATH" value="$(LocalDebuggerCommand)" />
+        <option name="PROGRAM_PARAMETERS" value="$(LocalDebuggerCommandArguments)" />
+        <option name="WORKING_DIRECTORY" value="$(LocalDebuggerWorkingDirectory)" />
+        <option name="PASS_PARENT_ENVS" value="1" />
+        <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      </configuration_1>
+      <configuration_2>
+        <option name="CONFIGURATION" value="Development Editor" />
+        <option name="PLATFORM" value="Android" />
+        <option name="PROJECT_FILE_PATH" value="$PROJECT_DIR$/Intermediate/ProjectFiles/UE4.vcxproj" />
+        <option name="EXE_PATH" value="$(LocalDebuggerCommand)" />
+        <option name="PROGRAM_PARAMETERS" value="$(LocalDebuggerCommandArguments)" />
+        <option name="WORKING_DIRECTORY" value="$(LocalDebuggerWorkingDirectory)" />
+        <option name="PASS_PARENT_ENVS" value="1" />
+        <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      </configuration_2>
+      <configuration_3>
+        <option name="CONFIGURATION" value="Development" />
+        <option name="PLATFORM" value="Win32" />
+        <option name="PROJECT_FILE_PATH" value="$PROJECT_DIR$/Intermediate/ProjectFiles/UE4.vcxproj" />
+        <option name="EXE_PATH" value="$(LocalDebuggerCommand)" />
+        <option name="PROGRAM_PARAMETERS" value="$(LocalDebuggerCommandArguments)" />
+        <option name="WORKING_DIRECTORY" value="$(LocalDebuggerWorkingDirectory)" />
+        <option name="PASS_PARENT_ENVS" value="1" />
+        <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      </configuration_3>
+      <configuration_4>
+        <option name="CONFIGURATION" value="DebugGame" />
+        <option name="PLATFORM" value="Android" />
+        <option name="PROJECT_FILE_PATH" value="$PROJECT_DIR$/Intermediate/ProjectFiles/UE4.vcxproj" />
+        <option name="EXE_PATH" value="$(LocalDebuggerCommand)" />
+        <option name="PROGRAM_PARAMETERS" value="$(LocalDebuggerCommandArguments)" />
+        <option name="WORKING_DIRECTORY" value="$(LocalDebuggerWorkingDirectory)" />
+        <option name="PASS_PARENT_ENVS" value="1" />
+        <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      </configuration_4>
+      <configuration_5>
+        <option name="CONFIGURATION" value="Shipping" />
+        <option name="PLATFORM" value="Win64" />
+        <option name="PROJECT_FILE_PATH" value="$PROJECT_DIR$/Intermediate/ProjectFiles/UE4.vcxproj" />
+        <option name="EXE_PATH" value="$(LocalDebuggerCommand)" />
+        <option name="PROGRAM_PARAMETERS" value="$(LocalDebuggerCommandArguments)" />
+        <option name="WORKING_DIRECTORY" value="$(LocalDebuggerWorkingDirectory)" />
+        <option name="PASS_PARENT_ENVS" value="1" />
+        <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      </configuration_5>
+      <configuration_6>
+        <option name="CONFIGURATION" value="Shipping" />
+        <option name="PLATFORM" value="Win32" />
+        <option name="PROJECT_FILE_PATH" value="$PROJECT_DIR$/Intermediate/ProjectFiles/UE4.vcxproj" />
+        <option name="EXE_PATH" value="$(LocalDebuggerCommand)" />
+        <option name="PROGRAM_PARAMETERS" value="$(LocalDebuggerCommandArguments)" />
+        <option name="WORKING_DIRECTORY" value="$(LocalDebuggerWorkingDirectory)" />
+        <option name="PASS_PARENT_ENVS" value="1" />
+        <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      </configuration_6>
+      <configuration_7>
+        <option name="CONFIGURATION" value="DebugGame Editor" />
+        <option name="PLATFORM" value="Win64" />
+        <option name="PROJECT_FILE_PATH" value="$PROJECT_DIR$/Intermediate/ProjectFiles/UE4.vcxproj" />
+        <option name="EXE_PATH" value="$(LocalDebuggerCommand)" />
+        <option name="PROGRAM_PARAMETERS" value="$(LocalDebuggerCommandArguments)" />
+        <option name="WORKING_DIRECTORY" value="$(LocalDebuggerWorkingDirectory)" />
+        <option name="PASS_PARENT_ENVS" value="1" />
+        <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      </configuration_7>
+      <configuration_8>
+        <option name="CONFIGURATION" value="DebugGame Editor" />
+        <option name="PLATFORM" value="Win32" />
+        <option name="PROJECT_FILE_PATH" value="$PROJECT_DIR$/Intermediate/ProjectFiles/UE4.vcxproj" />
+        <option name="EXE_PATH" value="$(LocalDebuggerCommand)" />
+        <option name="PROGRAM_PARAMETERS" value="$(LocalDebuggerCommandArguments)" />
+        <option name="WORKING_DIRECTORY" value="$(LocalDebuggerWorkingDirectory)" />
+        <option name="PASS_PARENT_ENVS" value="1" />
+        <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      </configuration_8>
+      <configuration_9>
+        <option name="CONFIGURATION" value="Development" />
+        <option name="PLATFORM" value="Android" />
+        <option name="PROJECT_FILE_PATH" value="$PROJECT_DIR$/Intermediate/ProjectFiles/UE4.vcxproj" />
+        <option name="EXE_PATH" value="$(LocalDebuggerCommand)" />
+        <option name="PROGRAM_PARAMETERS" value="$(LocalDebuggerCommandArguments)" />
+        <option name="WORKING_DIRECTORY" value="$(LocalDebuggerWorkingDirectory)" />
+        <option name="PASS_PARENT_ENVS" value="1" />
+        <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      </configuration_9>
+      <configuration_10>
+        <option name="CONFIGURATION" value="Shipping" />
+        <option name="PLATFORM" value="Android" />
+        <option name="PROJECT_FILE_PATH" value="$PROJECT_DIR$/Intermediate/ProjectFiles/UE4.vcxproj" />
+        <option name="EXE_PATH" value="$(LocalDebuggerCommand)" />
+        <option name="PROGRAM_PARAMETERS" value="$(LocalDebuggerCommandArguments)" />
+        <option name="WORKING_DIRECTORY" value="$(LocalDebuggerWorkingDirectory)" />
+        <option name="PASS_PARENT_ENVS" value="1" />
+        <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      </configuration_10>
+      <configuration_11>
+        <option name="CONFIGURATION" value="DebugGame" />
+        <option name="PLATFORM" value="Win32" />
+        <option name="PROJECT_FILE_PATH" value="$PROJECT_DIR$/Intermediate/ProjectFiles/UE4.vcxproj" />
+        <option name="EXE_PATH" value="$(LocalDebuggerCommand)" />
+        <option name="PROGRAM_PARAMETERS" value="$(LocalDebuggerCommandArguments)" />
+        <option name="WORKING_DIRECTORY" value="$(LocalDebuggerWorkingDirectory)" />
+        <option name="PASS_PARENT_ENVS" value="1" />
+        <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      </configuration_11>
+      <configuration_12>
+        <option name="CONFIGURATION" value="DebugGame" />
+        <option name="PLATFORM" value="Win64" />
+        <option name="PROJECT_FILE_PATH" value="$PROJECT_DIR$/Intermediate/ProjectFiles/UE4.vcxproj" />
+        <option name="EXE_PATH" value="$(LocalDebuggerCommand)" />
+        <option name="PROGRAM_PARAMETERS" value="$(LocalDebuggerCommandArguments)" />
+        <option name="WORKING_DIRECTORY" value="$(LocalDebuggerWorkingDirectory)" />
+        <option name="PASS_PARENT_ENVS" value="1" />
+        <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      </configuration_12>
+      <configuration_13>
+        <option name="CONFIGURATION" value="Development Editor" />
+        <option name="PLATFORM" value="Win32" />
+        <option name="PROJECT_FILE_PATH" value="$PROJECT_DIR$/Intermediate/ProjectFiles/UE4.vcxproj" />
+        <option name="EXE_PATH" value="$(LocalDebuggerCommand)" />
+        <option name="PROGRAM_PARAMETERS" value="$(LocalDebuggerCommandArguments)" />
+        <option name="WORKING_DIRECTORY" value="$(LocalDebuggerWorkingDirectory)" />
+        <option name="PASS_PARENT_ENVS" value="1" />
+        <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      </configuration_13>
+      <configuration_14>
+        <option name="CONFIGURATION" value="Development Editor" />
+        <option name="PLATFORM" value="Win64" />
+        <option name="PROJECT_FILE_PATH" value="$PROJECT_DIR$/Intermediate/ProjectFiles/UE4.vcxproj" />
+        <option name="EXE_PATH" value="$(LocalDebuggerCommand)" />
+        <option name="PROGRAM_PARAMETERS" value="$(LocalDebuggerCommandArguments)" />
+        <option name="WORKING_DIRECTORY" value="$(LocalDebuggerWorkingDirectory)" />
+        <option name="PASS_PARENT_ENVS" value="1" />
+        <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      </configuration_14>
+      <configuration_15>
+        <option name="CONFIGURATION" value="Development" />
+        <option name="PLATFORM" value="Win64" />
+        <option name="PROJECT_FILE_PATH" value="$PROJECT_DIR$/Intermediate/ProjectFiles/UE4.vcxproj" />
+        <option name="EXE_PATH" value="$(LocalDebuggerCommand)" />
+        <option name="PROGRAM_PARAMETERS" value="$(LocalDebuggerCommandArguments)" />
+        <option name="WORKING_DIRECTORY" value="$(LocalDebuggerWorkingDirectory)" />
+        <option name="PASS_PARENT_ENVS" value="1" />
+        <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      </configuration_15>
+      <option name="DEFAULT_PROJECT_PATH" value="$PROJECT_DIR$/Intermediate/ProjectFiles/UE4.vcxproj" />
+      <method v="2">
+        <option name="Build" />
+      </method>
+    </configuration>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="65269daa-26bf-438d-8b1a-f3381b88facb" name="Changes" comment="" />
+      <created>1646965232140</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1646965232140</updated>
+      <workItem from="1646965232141" duration="3527000" />
+      <workItem from="1647041013045" duration="2671000" />
+      <workItem from="1647049449655" duration="5973000" />
+      <workItem from="1647061068011" duration="2245000" />
+      <workItem from="1647064362938" duration="732000" />
+      <workItem from="1647104168149" duration="4115000" />
+      <workItem from="1647113565846" duration="16499000" />
+      <workItem from="1647148099341" duration="2453000" />
+      <workItem from="1647215564373" duration="8005000" />
+      <workItem from="1647306387705" duration="5310000" />
+      <workItem from="1647394612571" duration="3048000" />
+      <workItem from="1647477870944" duration="5070000" />
+      <workItem from="1647566297541" duration="5817000" />
+      <workItem from="1647575674233" duration="1971000" />
+      <workItem from="1647615886040" duration="8664000" />
+      <workItem from="1647636342546" duration="4110000" />
+      <workItem from="1647649119178" duration="1469000" />
+      <workItem from="1647655111646" duration="5489000" />
+      <workItem from="1647701710857" duration="5347000" />
+      <workItem from="1647714499974" duration="4074000" />
+      <workItem from="1647724141903" duration="2126000" />
+      <workItem from="1647733119689" duration="1227000" />
+      <workItem from="1647742901070" duration="2919000" />
+      <workItem from="1647789083583" duration="3018000" />
+      <workItem from="1647812221793" duration="611000" />
+      <workItem from="1647906173876" duration="5879000" />
+      <workItem from="1647920928717" duration="834000" />
+      <workItem from="1647993895905" duration="4315000" />
+      <workItem from="1648173701012" duration="632000" />
+      <workItem from="1648256016137" duration="4289000" />
+      <workItem from="1648309898398" duration="2512000" />
+      <workItem from="1648317821583" duration="656000" />
+      <workItem from="1648323069186" duration="829000" />
+      <workItem from="1648338077111" duration="5479000" />
+      <workItem from="1648353536314" duration="676000" />
+      <workItem from="1648403805143" duration="301000" />
+      <workItem from="1648432610143" duration="4753000" />
+      <workItem from="1648516074321" duration="6403000" />
+      <workItem from="1648525091496" duration="1311000" />
+      <workItem from="1648601717481" duration="3073000" />
+      <workItem from="1648609064062" duration="1230000" />
+      <workItem from="1648688607606" duration="3405000" />
+      <workItem from="1648774841445" duration="4287000" />
+      <workItem from="1648782263111" duration="319000" />
+      <workItem from="1648841387540" duration="1812000" />
+      <workItem from="1648847423396" duration="14414000" />
+      <workItem from="1648911913910" duration="14835000" />
+      <workItem from="1648942191232" duration="480000" />
+      <workItem from="1648942709930" duration="2174000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="UnityCheckinConfiguration" checkUnsavedScenes="true" />
+  <component name="UnityUnitTestConfiguration" currentTestLauncher="NUnit" />
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+</project>

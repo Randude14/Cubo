@@ -26,10 +26,12 @@ public:
 	void ShowScreen(FString ID);
 
 	UFUNCTION(BlueprintCallable, Category="Cubo")
-	void CloseScreen();
+	void CloseScreen(bool bForceClose=false);
 
 	UFUNCTION(BlueprintCallable, Category="Cubo")
 	bool CanForceClose();
+
+	virtual void Tick(float DeltaTime) override;
 
 protected:
 	// Called when the game starts or when spawned
@@ -40,9 +42,8 @@ protected:
 	UFUNCTION()
 	void OnVisibilityChanged(ESlateVisibility Visibility);
 
+	UPROPERTY()
 	class UCuboMenu* MenuScreen;
 
-public:
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	ESlateVisibility LastScreenVisibility = ESlateVisibility::Hidden;
 };

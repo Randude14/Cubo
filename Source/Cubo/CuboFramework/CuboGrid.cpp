@@ -4,8 +4,6 @@
 #include "CuboPiece.h"
 #include "CuboPlayerController.h"
 #include "DrawDebugHelpers.h"
-#include "ToolContextInterfaces.h"
-#include "Kismet/GameplayStatics.h"
 
 ACuboGrid::ACuboGrid()
 {
@@ -58,7 +56,8 @@ void ACuboGrid::BeginPlay()
 
 		RotateErrorPiece->Init(false, 0.f, 0.f);
 		RotateErrorPiece->SetActorHiddenInGame(true);
-		
+
+		bGameOver = true;
 		Pause();
 	}
 }
@@ -124,6 +123,7 @@ void ACuboGrid::Tick(float DeltaTime)
 		RotateErrorTimer -= DeltaTime;
 	}
 
+#if WITH_EDITOR
 	if(bShowGridSpaces)
 	{
 		TArray<int> Keys;
@@ -143,12 +143,19 @@ void ACuboGrid::Tick(float DeltaTime)
 			DrawDebugLine(GetWorld(), IndexLocation, IndexOutLocation, FColor::Red, false, -1, 0, 5.f);
 		}
 	}
+#endif
 }
 
 void ACuboGrid::NewGame()
 {
 	SetActorTickEnabled(true);
 	PieceQueue->EmptyQueue();
+
+	if(CurrentPiece)
+	{
+		CurrentPiece->DestroyPiece();
+		CurrentPiece = nullptr;
+	}
 
 	TArray<int32> Indicies;
 	Grid.GetKeys(Indicies);
@@ -159,12 +166,34 @@ void ACuboGrid::NewGame()
 		{
 			Block->Destroy();
 		}
-	}
+	}/*
+	if(ACuboPlayerController* PlayerController = Cast<ACuboPlayerController>( GetWorld()->GetFirstPlayerController() ))
+	{
+		if(ACuboMenuActor* MenuActor = PlayerController->GetMenuActor())
+		{
+			MenuActor->CloseScreen(true);
+		}
+	}*/
+	
 	Grid.Empty();
 	GridScore = 0;
 	ScoreChanged.Broadcast(this, 0, 0);
 	bGamePaused = bGameOver = false;
 }
+
+void ACuboGrid::Resume()
+{
+	bGamePaused = false;
+	SetActorTickEnabled(true);/*
+	if(ACuboPlayerController* PlayerController = Cast<ACuboPlayerController>( GetWorld()->GetFirstPlayerController() ))
+	{
+		if(ACuboMenuActor* MenuActor = PlayerController->GetMenuActor())
+		{
+			MenuActor->CloseScreen(true);
+		}
+	}*/
+}
+
 
 void ACuboGrid::UpdateHighlighter()
 {

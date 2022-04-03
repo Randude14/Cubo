@@ -70,7 +70,7 @@ void ACuboPiece::Tick(float DeltaTime)
 
 void ACuboPiece::ResetMoveTimer()
 {
-	MoveTimer = (bAccelerating) ? AccelerateTime : NormalTime;
+	MoveTimer = (bBoosting) ? AccelerateTime : NormalTime;
 }
 
 void ACuboPiece::AddPieceOffset(FVector Offset)
@@ -247,14 +247,18 @@ void ACuboPiece::SetActorHiddenInGame(bool bNewHidden)
 	}
 }
 
-void ACuboPiece::SetAccelerate(bool bAccelerate)
+void ACuboPiece::SetBoosting(bool bBoost)
 {
-	bAccelerating = bAccelerate;
+	bBoosting = bBoost;
 
 	// if we're accelerating get the time difference
-	if(bAccelerate)
+	if(bBoosting)
 	{
 		MoveTimer -= NormalTime - AccelerateTime;
 	}
 }
 
+bool ACuboPiece::IsBoostOn()
+{
+	return bBoosting;
+}

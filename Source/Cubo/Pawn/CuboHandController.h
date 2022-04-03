@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Components/CanvasPanelSlot.h"
 #include "Components/SplineComponent.h"
 #include "Components/SplineMeshComponent.h"
 #include "Components/WidgetInteractionComponent.h"
@@ -11,7 +12,6 @@
 #include "CuboHandController.generated.h"
 
 class ACuboPiece;
-
 
 USTRUCT()
 struct FControllerMoveInfo
@@ -50,14 +50,20 @@ public:
 	FControllerMoveInfo ControllerMoveInfo;
 
 	UPROPERTY(EditAnywhere, Category="Cubo")
-	bool bDebugHand=false;
+	UTexture* CursorTexture;
+
+	UPROPERTY(EditAnywhere, Category="Cubo")
+	FVector2D CursorSize;
+
+	UPROPERTY(EditAnywhere, Category="Cubo")
+	FLinearColor DefaultLaserColor;
+
+	UPROPERTY(EditAnywhere, Category="Cubo")
+	FLinearColor SelectedPieceLaserColor;
 
 	// How far the laser pointer should trace from the controller in world units
 	UPROPERTY(EditAnywhere, Category="Cubo")
 	float MaxLaserDistance;
-
-	UPROPERTY(EditAnywhere, Category="Cubo")
-	bool bUseMotion=true;
 
 	UPROPERTY()
 	ACuboHandController* OtherController;
@@ -68,13 +74,19 @@ protected:
 
 	void UpdateLaserBeam();
 
-	bool IsControllerGrabbing();
+	UPROPERTY()
+	UMaterialInstanceDynamic* LaserMaterialInstance;
 
+	UPROPERTY()
+	UWidgetComponent* HoveredWidgetComponent;
+
+	UPROPERTY()
+	class UImage* CursorImage;
 
 protected:
 	float MovingTimer;
 	bool bGrabBeingPressed = false;
-	bool UseKbm = false;
+	bool bPieceDragging = false;
 
 	UPROPERTY()
 	AActor* SelectedActor;
@@ -84,6 +96,9 @@ protected:
 
 	UPROPERTY()
 	ACuboGrid* Grid;
+
+	UPROPERTY()
+	UCanvasPanelSlot* CursorSlot;
 
 	FCuboGridLocation DraggedLocation;
 

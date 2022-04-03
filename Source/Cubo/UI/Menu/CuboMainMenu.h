@@ -14,7 +14,7 @@ class CUBO_API UCuboMainMenu : public UCuboWindow
 public:
 	
 	UPROPERTY(BlueprintReadWrite, meta=(BindWidget), Category="Cubo")
-	UButton* NewGameButton;
+	UButton* NewGameButton;	
 
 	UPROPERTY(BlueprintReadWrite, meta=(BindWidget), Category="Cubo")
 	UButton* SettingsButton;
@@ -23,6 +23,7 @@ public:
 	UButton* QuitGameButton;
 
 	virtual void NativeOnInitialized() override;
+	virtual void NativeDestruct() override;
 
 private:
 

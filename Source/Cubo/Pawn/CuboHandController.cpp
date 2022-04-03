@@ -4,13 +4,20 @@
 #include "CuboHandController.h"
 
 #include "DrawDebugHelpers.h"
-#include "HeadMountedDisplayFunctionLibrary.h"
+#include "Components/CanvasPanel.h"
+#include "Components/CanvasPanelSlot.h"
 #include "Components/WidgetInteractionComponent.h"
+#include "Components/Image.h"
 #include "Cubo/CuboFramework/CuboPiece.h"
+#include "Cubo/CuboFramework/CuboPlayerController.h"
 #include "Cubo/UI/CuboMenuActor.h"
 #include "Kismet/GameplayStatics.h"
 
-// Sets default values
+
+// Define custom channels
+#define COLLISION_MainMenu		ECC_GameTraceChannel1
+
+
 ACuboHandController::ACuboHandController()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
@@ -50,12 +57,23 @@ void ACuboHandController::BeginPlay()
 		Grid = Cast<ACuboGrid>(Actors[0]);
 	}
 
-	UseKbm = ! UHeadMountedDisplayFunctionLibrary::IsHeadMountedDisplayConnected();
-}
+	if(UMaterialInterface* LaserMat = LaserBeam->GetMaterial(0))
+	{
+		if(UMaterialInstanceDynamic* Instance = UMaterialInstanceDynamic::Create(LaserMat, LaserBeam))
+		{
+			LaserBeam->SetMaterial(0, Instance);
+			LaserBeam->SetMaterial(1, Instance);
+			Instance->SetVectorParameterValue(FName("LaserColor"), DefaultLaserColor);
+			LaserMaterialInstance = Instance;
+		}
+	}
 
-bool ACuboHandController::IsControllerGrabbing()
-{
-	return bGrabBeingPressed || UseKbm;
+	if(CursorTexture)
+	{
+		CursorImage = NewObject<UImage>(this, FName("CursorImage"));
+		CursorImage->Brush.SetResourceObject(CursorTexture);
+		CursorImage->SetVisibility(ESlateVisibility::HitTestInvisible);
+	}
 }
 
 // Called every frame
@@ -65,22 +83,25 @@ void ACuboHandController::Tick(float DeltaTime)
 	
 	UpdateLaserBeam();
 	
-	if(bUseMotion && MovingTimer > 0)
+	if(MovingTimer > 0)
 	{
 		MovingTimer -= DeltaTime;
 	}
 
-	if(bUseMotion && CuboPiece && CuboPiece->IsBeingGrabbed() && Grid)
+	if(ACuboPlayerController* PlayerController = Cast<ACuboPlayerController>(UGameplayStatics::GetPlayerController(this, 0)))
 	{
-		FCuboGridLocation CurrentDragged = Grid->LinePlaneIntersect(CuboPiece, LaserBeam->GetComponentLocation(), LaserBeam->GetForwardVector());
-
-		if( FMath::Abs(DraggedLocation.X - CurrentDragged.X) >= 2 )
+		if(PlayerController->UseMotionControls() && CuboPiece && CuboPiece->IsBeingGrabbed() && Grid && bPieceDragging && (!CuboPiece->IsBoostOn() || !PlayerController->ShouldLockPieceOnBoost()) )
 		{
-			int Delta = DraggedLocation.X - CurrentDragged.X;
+			FCuboGridLocation CurrentDragged = Grid->LinePlaneIntersect(CuboPiece, LaserBeam->GetComponentLocation(), LaserBeam->GetForwardVector());
 
-			if(Grid->TryMovePieceRL(CuboPiece, (Delta < 0) ? true : false ))
+			if( FMath::Abs(DraggedLocation.X - CurrentDragged.X) >= 2 )
 			{
-				DraggedLocation = CurrentDragged;
+				int Delta = DraggedLocation.X - CurrentDragged.X;
+
+				if(Grid->TryMovePieceRL(CuboPiece, (Delta < 0) ? true : false ))
+				{
+					DraggedLocation = CurrentDragged;
+				}
 			}
 		}
 	}
@@ -90,7 +111,7 @@ void ACuboHandController::UpdateLaserBeam()
 {
 	UWorld* World = GetWorld();
 
-	if(World == nullptr || (!bDebugHand && IsControllerGrabbing()) )
+	if(World == nullptr || (bGrabBeingPressed && CuboPiece))
 	{
 		return;
 	}
@@ -99,14 +120,63 @@ void ACuboHandController::UpdateLaserBeam()
 	Params.AddIgnoredActor(this);
 	Params.AddIgnoredActor(OtherController);
 	
-	FHitResult ObjectHitResult;
+	FHitResult ObjectHitResult, WidgetHitResult;
 	FVector LaserLocation = LaserDirection->GetComponentLocation();
 	FVector LaserForward = LaserDirection->GetForwardVector() * MaxLaserDistance + LaserLocation;
 	bool bHitObject = World->LineTraceSingleByChannel(ObjectHitResult, LaserLocation, LaserForward, ECollisionChannel::ECC_Visibility);
-	
-	SelectedActor = ObjectHitResult.GetActor();
+	bool bHitWidget = World->LineTraceSingleByChannel(WidgetHitResult, LaserLocation, LaserForward, ECollisionChannel::COLLISION_MainMenu);
 
-	FVector HitLocation = bHitObject ? ObjectHitResult.Location : LaserForward;
+	FVector HitLocation;
+	
+	if(! bHitWidget)
+	{
+		SelectedActor = ObjectHitResult.GetActor();
+		HitLocation = bHitObject ? ObjectHitResult.Location : LaserForward;
+	}
+	else
+	{
+		SelectedActor = nullptr;
+		HitLocation = bHitWidget ? WidgetHitResult.Location : LaserForward;
+	}
+
+	if(CursorImage)
+	{
+		if(UWidgetComponent* Component = Cast<UWidgetComponent>( WidgetHitResult.GetComponent() ))
+		{
+			if(CursorSlot == nullptr)
+			{
+				HoveredWidgetComponent = Component;
+
+				if(UUserWidget* UserWidget = Component->GetUserWidgetObject())
+				{
+					if(UCanvasPanel* Panel = Cast<UCanvasPanel>(UserWidget->GetRootWidget()))
+					{
+						CursorSlot = Panel->AddChildToCanvas(CursorImage);
+						CursorSlot->SetZOrder(5);
+					}
+				}
+			}
+			if(CursorSlot)
+			{
+				CursorSlot->SetSize(CursorSize);
+				CursorSlot->SetAlignment(FVector2D(0.5, 0.5));
+
+				FVector CursorHitLocation = HitLocation - Component->GetComponentLocation();
+				FVector2D CursorLocation( CursorHitLocation.Y, CursorHitLocation.Z );
+				CursorLocation.X = FMath::Abs(CursorLocation.X);
+				CursorLocation.Y = FMath::Abs(CursorLocation.Y);
+				CursorSlot->SetPosition(CursorLocation);
+			}
+		}
+		else if(HoveredWidgetComponent)
+		{
+			CursorImage->RemoveFromParent();
+			CursorSlot = nullptr;
+			HoveredWidgetComponent = nullptr;
+		}
+	}
+
+	
 	LaserSpline->SetLocationAtSplinePoint(0, LaserLocation, ESplineCoordinateSpace::World);
 	LaserSpline->SetTangentAtSplinePoint(0, FVector::ZeroVector, ESplineCoordinateSpace::World);
 	LaserSpline->SetLocationAtSplinePoint(1, HitLocation, ESplineCoordinateSpace::World);
@@ -125,17 +195,16 @@ void ACuboHandController::UpdateLaserBeam()
 	{
 		SelectedPiece = Cast<ACuboPiece>(SelectedActor->GetAttachParentActor());
 	}
-
-	if(! SelectedPiece && SelectedActor)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Ditto      %s"), *SelectedActor->GetName())
-	}
 	
 	if(SelectedPiece != CuboPiece)
 	{
 		if(CuboPiece && (! OtherController || OtherController->CuboPiece != CuboPiece) )
 		{
 			CuboPiece->Unhighlight();
+			if(LaserMaterialInstance)
+			{
+				LaserMaterialInstance->SetVectorParameterValue(FName("LaserColor"), DefaultLaserColor);
+			}
 		}
 
 		if(SelectedActor)
@@ -145,6 +214,10 @@ void ACuboHandController::UpdateLaserBeam()
 			if(CuboPiece)
 			{
 				CuboPiece->Highlight();
+				if(LaserMaterialInstance)
+				{
+					LaserMaterialInstance->SetVectorParameterValue(FName("LaserColor"), SelectedPieceLaserColor);
+				}
 			}
 		}
 		else
@@ -158,18 +231,22 @@ void ACuboHandController::GrabPressed()
 {
 	bGrabBeingPressed = true;
 
-	if(LaserBeam->IsVisible())
+	if(ACuboPlayerController* PlayerController = Cast<ACuboPlayerController>(UGameplayStatics::GetPlayerController(this, 0)))
 	{
-		LaserBeam->SetVisibility(false);
-	}
-
-	if(CuboPiece && ! CuboPiece->IsBeingGrabbed())
-	{
-		CuboPiece->GrabPiece(this);
-		
-		if(Grid && !Grid->IsPaused())
+		if(CuboPiece && ! CuboPiece->IsBeingGrabbed())
 		{
-			DraggedLocation = Grid->LinePlaneIntersect(CuboPiece, LaserBeam->GetComponentLocation(), LaserBeam->GetForwardVector());
+			CuboPiece->GrabPiece(this);
+			
+			if(LaserBeam->IsVisible())
+			{
+				LaserBeam->SetVisibility(false);
+			}
+		
+			if(Grid && !Grid->IsPaused())
+			{
+				bPieceDragging = true;
+				DraggedLocation = Grid->LinePlaneIntersect(CuboPiece, LaserBeam->GetComponentLocation(), LaserBeam->GetForwardVector());
+			}
 		}
 	}
 }
@@ -185,6 +262,7 @@ void ACuboHandController::GrabReleased()
 
 	if(CuboPiece)
 	{
+		bPieceDragging = false;
 		CuboPiece->ReleasePiece(this);
 	}
 }
@@ -195,7 +273,7 @@ void ACuboHandController::AcceleratePressed()
 	{
 		if(CuboPiece)
 		{
-			CuboPiece->SetAccelerate(true);
+			CuboPiece->SetBoosting(true);
 		}
 		else
 		{
@@ -214,7 +292,7 @@ void ACuboHandController::AccelerateReleased()
 	{
 		if(CuboPiece)
 		{
-			CuboPiece->SetAccelerate(false);
+			CuboPiece->SetBoosting(false);
 		}
 		else
 		{
@@ -242,18 +320,24 @@ void ACuboHandController::MovePieceStopped()
 
 void ACuboHandController::TryMovePieceLeft()
 {
-	if(!bUseMotion && Grid && !Grid->IsPaused() && CuboPiece && IsControllerGrabbing() && MovingTimer <= 0.f)
+	if(ACuboPlayerController* PlayerController = Cast<ACuboPlayerController>(UGameplayStatics::GetPlayerController(this, 0)))
 	{
-		Grid->TryMovePieceRL(CuboPiece, false);
-		MovingTimer = ControllerMoveInfo.MovePieceTime;            
+		if(!PlayerController->UseMotionControls() && Grid && !Grid->IsPaused() && CuboPiece && (!CuboPiece->IsBoostOn() || !PlayerController->ShouldLockPieceOnBoost()) && bGrabBeingPressed && MovingTimer <= 0.f)
+		{
+			Grid->TryMovePieceRL(CuboPiece, false);
+			MovingTimer = ControllerMoveInfo.MovePieceTime;            
+		}
 	}
 }
 
 void ACuboHandController::TryMovePieceRight()
 {
-	if(!bUseMotion && Grid && !Grid->IsPaused() && CuboPiece && IsControllerGrabbing() && MovingTimer <= 0.f)
+	if(ACuboPlayerController* PlayerController = Cast<ACuboPlayerController>(UGameplayStatics::GetPlayerController(this, 0)))
 	{
-		Grid->TryMovePieceRL(CuboPiece, true);
-		MovingTimer = ControllerMoveInfo.MovePieceTime;
+		if(!PlayerController->UseMotionControls() && Grid && !Grid->IsPaused() && CuboPiece && (!CuboPiece->IsBoostOn() || !PlayerController->ShouldLockPieceOnBoost()) && bGrabBeingPressed && MovingTimer <= 0.f)
+		{
+			Grid->TryMovePieceRL(CuboPiece, true);
+			MovingTimer = ControllerMoveInfo.MovePieceTime;
+		}
 	}
 }

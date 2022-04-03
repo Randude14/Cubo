@@ -21,12 +21,12 @@ void UCuboMenu::NativeOnInitialized()
 
 		if(Class)
 		{
-			UCuboWindow* Widget = CreateWidget<UCuboWindow>(GetWorld(), Class, FName(WindowID));
+			UCuboWindow* Widget = CreateWidget<UCuboWindow>(GetOwningPlayer(), Class, FName(WindowID));
 
 			if(Widget)
 			{
 				Widget->WindowOpenRequest.AddDynamic(this, &UCuboMenu::OnWindowOpenRequest);
-				Widget->WindowReturn.AddDynamic(this, &UCuboMenu::UCuboMenu::OnWindowReturn);
+				Widget->WindowReturn.AddDynamic(this, &UCuboMenu::OnWindowReturn);
 				WindowWidgets.Add(WindowID, Widget);
 				MenuWidgetSwitcher->AddChild(Widget);
 			}
@@ -38,14 +38,22 @@ void UCuboMenu::NativeDestruct()
 {
 	Super::NativeDestruct();
 
+	UE_LOG(LogTemp, Warning, TEXT("NativeDestruct"));
+}
+
+
+void UCuboMenu::DestroyWindows()
+{
 	if(MenuWidgetSwitcher)
 	{
 		while(MenuWidgetSwitcher->GetChildrenCount() > 0)
 		{
-			MenuWidgetSwitcher->RemoveChildAt(0);
+			if(UWidget* Widget = MenuWidgetSwitcher->GetChildAt(MenuWidgetSwitcher->GetChildrenCount()-1))
+			{
+				Widget->RemoveFromParent();
+			}
 		}
 	}
-
 
 	WindowWidgets.Empty();
 }
@@ -63,13 +71,17 @@ void UCuboMenu::OnWindowReturn()
 
 		if(WindowStack.Num())
 		{
-			FString PrevWindow = WindowStack[0];
+			FString PrevWindow = WindowStack.Pop();
 			ShowWindow(PrevWindow);
 		}
 		else
 		{
-			CloseWindow();
+			CloseWindow(true);
 		}
+	}
+	else
+	{
+		CloseWindow(true);
 	}
 }
 
@@ -90,10 +102,22 @@ void UCuboMenu::ShowWindow(FString ID)
 	}
 }
 
-void UCuboMenu::CloseWindow()
+bool UCuboMenu::CloseWindow(bool bForceClose)
 {
+	if(IsVisible())
+	{
+		if(UCuboWindow* Window = Cast<UCuboWindow>( MenuWidgetSwitcher->GetActiveWidget() ))
+		{
+			if(!Window->CanForceClose() && !bForceClose)
+			{
+				return false;
+			}	
+		}
+	}
+	
 	SetVisibility(ESlateVisibility::Hidden);
 	WindowStack.Empty();
+	return true;
 }
 
 bool UCuboMenu::CanForceClose()

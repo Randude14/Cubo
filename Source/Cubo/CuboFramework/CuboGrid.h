@@ -136,11 +136,7 @@ public:
 	};
 
 	UFUNCTION(BlueprintCallable, Category="Cubo")
-	void Resume()
-	{
-		bGamePaused = false;
-		SetActorTickEnabled(true);
-	};
+	void Resume();
 
 	UFUNCTION(BlueprintCallable, Category="Cubo")
 	bool IsPaused() const

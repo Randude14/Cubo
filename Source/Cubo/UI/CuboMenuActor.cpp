@@ -3,6 +3,8 @@
 
 #include "CuboMenu.h"
 
+// Define custom channels
+#define COLLISION_MainMenu		ECC_GameTraceChannel1
 
 ACuboMenuActor::ACuboMenuActor()
 {
@@ -12,6 +14,9 @@ ACuboMenuActor::ACuboMenuActor()
 	MainMenuComponent = CreateDefaultSubobject<UWidgetComponent>("MainMenu");
 	MainMenuComponent->SetupAttachment(MenuRoot);
 	MainMenuComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bStartWithTickEnabled = false;
 }
 
 void ACuboMenuActor::BeginPlay()
@@ -22,8 +27,9 @@ void ACuboMenuActor::BeginPlay()
 
 	if(MenuScreen)
 	{
-		ShowScreen("MainMenu");
+		MainMenuComponent->SetCollisionResponseToAllChannels(ECR_Ignore);
 		MenuScreen->OnVisibilityChanged.AddDynamic(this, &ACuboMenuActor::OnVisibilityChanged);
+		ShowScreen("MainMenu");
 	}
 }
 
@@ -34,18 +40,33 @@ void ACuboMenuActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	if(MenuScreen)
 	{
 		MenuScreen->OnVisibilityChanged.RemoveAll(this);
+		MenuScreen->DestroyWindows();
 	}
 
 	MenuScreen = nullptr;
+	MainMenuComponent->ReleaseResources();
+	MainMenuComponent->SetWidget(nullptr);
 }
 
 
 void ACuboMenuActor::OnVisibilityChanged(ESlateVisibility Visibility)
 {
-	if(Visibility == ESlateVisibility::Hidden)
+	// Only check if the visibility actually changes
+	if(LastScreenVisibility != Visibility)
 	{
-		CloseScreen();
+		LastScreenVisibility = Visibility;
+		
+		if(Visibility == ESlateVisibility::Hidden)
+		{
+			CloseScreen();
+		}
 	}
+}
+
+void ACuboMenuActor::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
 }
 
 void ACuboMenuActor::ShowScreen(FString ID)
@@ -54,7 +75,9 @@ void ACuboMenuActor::ShowScreen(FString ID)
 	{
 		SetActorHiddenInGame(false);
 		MainMenuComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		MainMenuComponent->SetCollisionResponseToChannel(ECollisionChannel::COLLISION_MainMenu, ECollisionResponse::ECR_Block);
 		MenuScreen->ShowWindow(ID);
+		SetActorTickEnabled(true);
 	}
 }
 
@@ -68,19 +91,12 @@ bool ACuboMenuActor::CanForceClose()
 }
 
 
-void ACuboMenuActor::CloseScreen()
+void ACuboMenuActor::CloseScreen(bool bForceClose)
 {
-	if(MenuScreen && MenuScreen->CanForceClose())
+	if(MenuScreen && MenuScreen->CloseWindow(bForceClose))
 	{
 		SetActorHiddenInGame(true);
 		MainMenuComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		MainMenuComponent->SetCollisionResponseToChannel(ECollisionChannel::COLLISION_MainMenu, ECollisionResponse::ECR_Ignore);
 	}
 }
-
-
-// Called every frame
-void ACuboMenuActor::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-}
-

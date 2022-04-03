@@ -4,6 +4,8 @@
 
 void UCuboPauseMenu::NativeOnInitialized()
 {
+	Super::NativeOnInitialized();
+	
 	if(ResumeButton)
 	{
 		ResumeButton->OnReleased.AddDynamic(this, &UCuboPauseMenu::ResumeButtonPressed);

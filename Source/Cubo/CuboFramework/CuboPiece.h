@@ -40,7 +40,7 @@ protected:
 	
 	int Rotate = 0;
 	bool bInit = false;
-	bool bAccelerating = false;
+	bool bBoosting = false;
 	bool bRotateEnabled;
 	float MoveTimer;
 
@@ -58,7 +58,8 @@ public:
 	void ReleasePiece(AActor* Gripping);
 	bool IsBeingGrabbed() const;
 
-	void SetAccelerate(bool bAccelerate);
+	void SetBoosting(bool bBoosting);
+	bool IsBoostOn();
 	bool MoveTimerUp() { return MoveTimer <= 0.f; };
 	void ResetMoveTimer();
 	

@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "CuboGrid.h"
 #include "Cubo/UI/CuboMenuActor.h"
-#include "UObject/Object.h"
 #include "CuboPlayerController.generated.h"
 
 /**
@@ -17,14 +16,28 @@ class CUBO_API ACuboPlayerController : public APlayerController
 	GENERATED_BODY()
 
 public:
-	virtual void BeginPlay() override;
+
+	UFUNCTION(BlueprintCallable, Category="Cubo")
+	void SetUseMotionControls(bool bMotionControls);
 	
+	UFUNCTION(BlueprintCallable, Category="Cubo")
+	void SetLockPieceOnBoost(bool bLockBoost);
+
+	UFUNCTION(BlueprintCallable, Category="Cubo")
 	void SaveSettings();
 
-	bool IsMotionControls();
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category="Cubo")
+	bool UseMotionControls();
 
-	bool LockOnAccelerate();
-
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category="Cubo")
+	bool ShouldLockPieceOnBoost();
+	
+	
+	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+	
+	void LoadSettings();
+	
 	ACuboGrid* GetOwningGrid() const;
 	ACuboMenuActor* GetMenuActor() const;
 
@@ -36,4 +49,8 @@ protected:
 	ACuboGrid* OwningGrid;
 	UPROPERTY()
 	ACuboMenuActor* MenuActor;
+
+private:
+	bool bUseMotionControls=true;
+	bool bLockPieceOnBoost=true;
 };

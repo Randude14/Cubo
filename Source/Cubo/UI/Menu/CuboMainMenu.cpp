@@ -9,6 +9,8 @@
 
 void UCuboMainMenu::NativeOnInitialized()
 {
+	Super::NativeOnInitialized();
+	
 	if(NewGameButton)
 	{
 		NewGameButton->OnReleased.AddDynamic(this, &UCuboMainMenu::NewGamePressed);
@@ -23,21 +25,37 @@ void UCuboMainMenu::NativeOnInitialized()
 	}
 }
 
+void UCuboMainMenu::NativeDestruct()
+{
+	Super::NativeDestruct();
+}
+
+
 void UCuboMainMenu::NewGamePressed()
 {
 	if(ACuboPlayerController* PlayerController = Cast<ACuboPlayerController>(GetOwningPlayer()))
 	{
 		if(ACuboGrid* Grid = PlayerController->GetOwningGrid())
 		{
-			Grid->NewGame();
-			WindowReturn.Broadcast();
+			if(Grid->IsGameOver())
+			{
+				Grid->NewGame();
+				WindowReturn.Broadcast();
+			}
+			else
+			{
+				WindowOpenRequest.Broadcast("ConfirmNewGameWindow");
+			}
 		}
 	}
 }
 
 void UCuboMainMenu::QuitGamePressed()
 {
-	FGenericPlatformMisc::RequestExit(false);
+	if(GetOwningPlayer())
+	{
+		GetOwningPlayer()->ConsoleCommand("quit");
+	}
 }
 
 void UCuboMainMenu::SettingsPressed()

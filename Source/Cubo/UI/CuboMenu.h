@@ -7,11 +7,6 @@
 #include "CuboMenu.generated.h"
 
 class UWidgetSwitcher;
-class UImage;
-
-class UCuboMainMenu;
-class UCuboSettingsMenu;
-class UCuboConfirmNewGame;
 
 UCLASS()
 class CUBO_API UCuboMenu : public UUserWidget
@@ -28,11 +23,12 @@ public:
 	TMap<FString, TSubclassOf<UCuboWindow>> WindowClasses;
 	
 	void ShowWindow(FString ID);
-	void CloseWindow();
+	bool CloseWindow(bool bForceClose=false);
 	bool CanForceClose();
 
 	virtual void NativeOnInitialized() override;
 	virtual void NativeDestruct() override;
+	void DestroyWindows();
 
 private:
 	UPROPERTY()

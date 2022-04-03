@@ -47,21 +47,13 @@ void ACuboPawn::BeginPlay()
 		RightController->OtherController = LeftController;
 		LeftController->OtherController = RightController;
 
-		RightController->ControlsDisplay->SetVisibility(false, true);
-		LeftController->ControlsDisplay->SetVisibility(false, true);
+		//RightController->ControlsDisplay->SetVisibility(false, true);
+		//LeftController->ControlsDisplay->SetVisibility(false, true);
 	}
 
 	if(! UHeadMountedDisplayFunctionLibrary::IsHeadMountedDisplayConnected())
 	{
 		CameraComponent->SetRelativeLocation( KbmCameraLocation->GetRelativeLocation() );
-	}
-
-	TArray<AActor*> Actors;
-	UGameplayStatics::GetAllActorsOfClass(this, ACuboMenuActor::StaticClass(), Actors);
-
-	if(Actors.Num() > 0)
-	{
-		MenuActor = Cast<ACuboMenuActor>(Actors[0]);
 	}
 }
 
@@ -96,9 +88,9 @@ void ACuboPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 void ACuboPawn::MenuButtonPressed()
 {
-	if(MenuActor)
+	if(ACuboPlayerController* PlayerController = Cast<ACuboPlayerController>(GetController()))
 	{
-		if(ACuboPlayerController* PlayerController = Cast<ACuboPlayerController>( GetController() ))
+		if(ACuboMenuActor* MenuActor = PlayerController->GetMenuActor())
 		{
 			if(ACuboGrid* Grid = PlayerController->GetOwningGrid())
 			{
