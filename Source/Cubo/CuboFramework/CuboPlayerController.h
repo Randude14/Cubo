@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "CuboGrid.h"
 #include "Cubo/UI/CuboMenuActor.h"
+#include "Sound/AmbientSound.h"
 #include "CuboPlayerController.generated.h"
 
 /**
@@ -24,6 +25,9 @@ public:
 	void SetLockPieceOnBoost(bool bLockBoost);
 
 	UFUNCTION(BlueprintCallable, Category="Cubo")
+	void SetGameVolume(float Volume);
+
+	UFUNCTION(BlueprintCallable, Category="Cubo")
 	void SaveSettings();
 
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category="Cubo")
@@ -31,6 +35,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category="Cubo")
 	bool ShouldLockPieceOnBoost();
+
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category="Cubo")
+	float GetGameSoundVolume() const;
 	
 	
 	virtual void BeginPlay() override;
@@ -49,8 +56,11 @@ protected:
 	ACuboGrid* OwningGrid;
 	UPROPERTY()
 	ACuboMenuActor* MenuActor;
+	UPROPERTY()
+	AAmbientSound* GameSoundActor;
 
 private:
 	bool bUseMotionControls=true;
 	bool bLockPieceOnBoost=true;
+	float GameSoundVolume=1.0f;
 };

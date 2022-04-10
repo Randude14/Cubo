@@ -55,12 +55,6 @@ public:
 	UPROPERTY(EditAnywhere, Category="Cubo")
 	FVector2D CursorSize;
 
-	UPROPERTY(EditAnywhere, Category="Cubo")
-	FLinearColor DefaultLaserColor;
-
-	UPROPERTY(EditAnywhere, Category="Cubo")
-	FLinearColor SelectedPieceLaserColor;
-
 	// How far the laser pointer should trace from the controller in world units
 	UPROPERTY(EditAnywhere, Category="Cubo")
 	float MaxLaserDistance;

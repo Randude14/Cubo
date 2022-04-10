@@ -1,4 +1,3 @@
-- Connect the main menu with the pawn so the pawn class can have easy access
 - Eventually be able to juggle multiple pieces at once that will be time based
 - Display the "next piece" as an icon on the board to the right of the grid
 - Display the "next piece timer" on the progress bar

@@ -57,17 +57,6 @@ void ACuboHandController::BeginPlay()
 		Grid = Cast<ACuboGrid>(Actors[0]);
 	}
 
-	if(UMaterialInterface* LaserMat = LaserBeam->GetMaterial(0))
-	{
-		if(UMaterialInstanceDynamic* Instance = UMaterialInstanceDynamic::Create(LaserMat, LaserBeam))
-		{
-			LaserBeam->SetMaterial(0, Instance);
-			LaserBeam->SetMaterial(1, Instance);
-			Instance->SetVectorParameterValue(FName("LaserColor"), DefaultLaserColor);
-			LaserMaterialInstance = Instance;
-		}
-	}
-
 	if(CursorTexture)
 	{
 		CursorImage = NewObject<UImage>(this, FName("CursorImage"));
@@ -201,10 +190,6 @@ void ACuboHandController::UpdateLaserBeam()
 		if(CuboPiece && (! OtherController || OtherController->CuboPiece != CuboPiece) )
 		{
 			CuboPiece->Unhighlight();
-			if(LaserMaterialInstance)
-			{
-				LaserMaterialInstance->SetVectorParameterValue(FName("LaserColor"), DefaultLaserColor);
-			}
 		}
 
 		if(SelectedActor)
@@ -214,10 +199,6 @@ void ACuboHandController::UpdateLaserBeam()
 			if(CuboPiece)
 			{
 				CuboPiece->Highlight();
-				if(LaserMaterialInstance)
-				{
-					LaserMaterialInstance->SetVectorParameterValue(FName("LaserColor"), SelectedPieceLaserColor);
-				}
 			}
 		}
 		else
