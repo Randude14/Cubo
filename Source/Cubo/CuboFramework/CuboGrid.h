@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "CuboLineEffect.h"
 #include "CuboPieceQueue.h"
 #include "Cubo/CuboBlock.h"
 #include "GameFramework/Actor.h"
@@ -37,6 +38,9 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<ACuboBlock> RotateErrorBlockClass;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<ACuboLineEffect> CuboLineEffectClass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Cubo")
 	int32 GridWidth=10;

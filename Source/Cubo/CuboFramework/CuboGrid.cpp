@@ -179,6 +179,11 @@ void ACuboGrid::NewGame()
 	GridScore = 0;
 	ScoreChanged.Broadcast(this, 0, 0);
 	bGamePaused = bGameOver = false;
+	for(int i = (GridHeight-3) * GridWidth; i < GridWidth*GridHeight; i++)
+	{
+		ACuboBlock* Block = GetWorld()->SpawnActor<ACuboBlock>(HighlightBlockClass);
+		Grid.Add(i, Block);
+	}
 }
 
 void ACuboGrid::Resume()
@@ -458,7 +463,14 @@ void ACuboGrid::CheckFilledLines()
 					ACuboBlock* Block = Grid[Index];
 					if(Block)
 					{
+						FVector BlockLocation = Block->GetActorLocation();
 						Block->Destroy();
+
+						if(CuboLineEffectClass)
+						{
+							FActorSpawnParameters Paramters;
+							ACuboLineEffect* LineEffect = GetWorld()->SpawnActor<ACuboLineEffect>(CuboLineEffectClass, BlockLocation, FRotator::ZeroRotator);
+						}
 					}
 					Grid.Remove(Index);
 				}
