@@ -14,9 +14,17 @@ void ACuboPlayerController::BeginPlay()
 	MenuActor = GetActorOfClassFromWorld<ACuboMenuActor>(ACuboMenuActor::StaticClass());
 	GameSoundActor = GetActorOfClassFromWorld<AAmbientSound>(AAmbientSound::StaticClass());
 	LoadSettings();
+	
 	if(GameSoundActor)
 	{
-		GameSoundActor->GetAudioComponent()->AdjustVolume(0.f, GameSoundVolume);
+		if(bGameSoundMute)
+		{
+			GameSoundActor->GetAudioComponent()->Stop();
+		}
+		else
+		{
+			GameSoundActor->GetAudioComponent()->AdjustVolume(0.f, GameSoundVolume);
+		}
 	}
 }
 
@@ -82,6 +90,11 @@ void ACuboPlayerController::LoadSettings()
 			TSharedPtr<FJsonValue> LockBoostJson = Values["lock-boost"];
 			LockBoostJson->TryGetBool(bLockPieceOnBoost);
 		}
+		if(Values.Contains("game-volume-mute"))
+		{
+			TSharedPtr<FJsonValue> GameSoundMuteJson = Values["game-volume-mute"];
+			GameSoundMuteJson->TryGetBool(bGameSoundMute);
+		}
 		if(Values.Contains("game-volume"))
 		{
 			TSharedPtr<FJsonValue> LockBoostJson = Values["game-volume"];
@@ -108,10 +121,12 @@ void ACuboPlayerController::SaveSettings()
 	TSharedPtr<FJsonValue> MotionControlsSetting = MakeShareable(new FJsonValueBoolean(bUseMotionControls));
 	TSharedPtr<FJsonValue> LockBoostSetting = MakeShareable(new FJsonValueBoolean(bLockPieceOnBoost));
 	TSharedPtr<FJsonValue> GameVolumeSetting = MakeShareable(new FJsonValueNumber(GameSoundVolume));
+	TSharedPtr<FJsonValue> GameMuteSoundSetting = MakeShareable(new FJsonValueBoolean(bGameSoundMute));
 
 	JsonObject->SetField("motion-controls", MotionControlsSetting);
 	JsonObject->SetField("lock-boost", LockBoostSetting);
 	JsonObject->SetField("game-volume", GameVolumeSetting);
+	JsonObject->SetField("game-volume-mute", GameVolumeSetting);
 
 	FString OutputString = "";
 	TSharedRef<TJsonWriter<>> Writer = TJsonWriterFactory<>::Create(&OutputString);
@@ -130,6 +145,11 @@ bool ACuboPlayerController::UseMotionControls()
 	return bUseMotionControls;
 }
 
+bool ACuboPlayerController::ShouldGameSoundMute()
+{
+	return bGameSoundMute;
+}
+
 float ACuboPlayerController::GetGameSoundVolume() const
 {
 	return GameSoundVolume;
@@ -145,12 +165,37 @@ void ACuboPlayerController::SetLockPieceOnBoost(bool bLockBoost)
 	bLockPieceOnBoost = bLockBoost;
 }
 
+void ACuboPlayerController::SetGameSoundMute(bool bMute)
+{
+	bGameSoundMute = bMute;
+
+
+	if(GameSoundActor)
+	{
+		if(bGameSoundMute)
+		{
+			if(GameSoundActor->GetAudioComponent()->IsPlaying())
+			{
+				GameSoundActor->GetAudioComponent()->Stop();
+			}
+		}
+		else
+		{
+			if(! GameSoundActor->GetAudioComponent()->IsPlaying())
+			{
+				GameSoundActor->GetAudioComponent()->Play();
+				GameSoundActor->GetAudioComponent()->AdjustVolume(0.f, GameSoundVolume);
+			}
+		}
+	}
+}
+
 void ACuboPlayerController::SetGameVolume(float Volume)
 {
 	bool bShouldPlay = FMath::IsNearlyZero(GameSoundVolume) || GameSoundVolume <= 0.f;
 	
 	GameSoundVolume = Volume;
-	if(GameSoundActor)
+	if(GameSoundActor && !bGameSoundMute)
 	{
 		if(bShouldPlay && ! FMath::IsNearlyZero(GameSoundVolume) )
 		{

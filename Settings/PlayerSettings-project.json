@@ -1,5 +1,6 @@
 {
 	"motion-controls": true,
 	"lock-boost": true,
-	"game-volume": 0.0
+	"game-volume": 0,
+	"game-volume-mute": 0
 }

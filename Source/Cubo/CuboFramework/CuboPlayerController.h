@@ -28,6 +28,9 @@ public:
 	void SetGameVolume(float Volume);
 
 	UFUNCTION(BlueprintCallable, Category="Cubo")
+	void SetGameSoundMute(bool bMute);
+
+	UFUNCTION(BlueprintCallable, Category="Cubo")
 	void SaveSettings();
 
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category="Cubo")
@@ -35,6 +38,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category="Cubo")
 	bool ShouldLockPieceOnBoost();
+
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category="Cubo")
+	bool ShouldGameSoundMute();
 
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category="Cubo")
 	float GetGameSoundVolume() const;
@@ -62,5 +68,6 @@ protected:
 private:
 	bool bUseMotionControls=true;
 	bool bLockPieceOnBoost=true;
+	bool bGameSoundMute=false;
 	float GameSoundVolume=1.0f;
 };
